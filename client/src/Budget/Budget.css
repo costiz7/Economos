@@ -1,0 +1,118 @@
+.budget-card-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white-color);
+    border: solid 3px var(--black-color);
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.budget-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 15px 20px;
+    cursor: pointer;
+    gap: 15px;
+    background-color: var(--white-color);
+    transition: all 0.3s ease;
+}
+
+.budget-header:hover {
+    filter: brightness(0.9);
+}
+
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-top-row > .header-left-side {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 1.5px;
+    color: var(--black-color);
+}
+
+.header-progress-container {
+    width: 100%;
+    pointer-events: none; 
+}
+
+.budget-body-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease-in-out;
+}
+
+.budget-body-wrapper.expanded {
+    max-height: 250px; 
+}
+
+.budget-body {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0px 20px 20px 20px;
+}
+
+.body-budget-details {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 10px 20px; 
+    align-items: center;
+    padding-top: 15px;
+}
+
+.body-detail-label {
+    color: var(--black-color);
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.body-detail-value {
+    font-weight: bold;
+    color: var(--black-color);
+    font-size: 1rem;
+}
+
+.budget-actions-row {
+    grid-column: 1 / -1; 
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.budget-action-btn {
+    padding: 8px 20px;
+    font-family: var(--text-font);
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    border: solid 3px var(--black-color);
+    border-radius: 5px;
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    background-color: var(--white-color);
+    color: var(--black-color);
+    transition: all 0.3s ease;
+}
+
+.budget-action-btn:hover {
+    filter: brightness(0.8);
+}
+
+.delete-btn {
+    color: var(--red-color);
+}

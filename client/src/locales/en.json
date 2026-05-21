@@ -127,6 +127,35 @@
     "modalYes": "Yes",
     "syncSuccess": "Bank data imported successfully!"
   },
+  "budgets": {
+    "pageTitle": "My Budgets",
+    "addBtn": "+ New Budget",
+    "general": "General",
+    "period": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "status": "Status",
+    "limit": "Limit",
+    "spent": "Spent",
+    "modifyBtn": "Modify",
+    "deleteBtn": "Delete",
+    "status_safe": "Safe",
+    "status_warning": "Warning",
+    "status_exceeded": "Exceeded",
+    "status_untouched": "Untouched",
+    "modalAddTitle": "Create New Budget",
+    "modalModifyTitle": "Modify Budget",
+    "modalDeleteTitle": "Delete Budget",
+    "modalDeleteDesc": "Are you sure you want to delete this budget? This action cannot be undone.",
+    "modalYes": "Yes, Delete",
+    "modalNo": "Cancel",
+    "saveBtn": "Save",
+    "selectCategory": "-- General (All Categories) --",
+    "amountPlaceholder": "Enter limit amount...",
+    "error_BUDGET_ALREADY_EXISTS": "A budget for this category and period already exists."
+  },
   "errors": {
     "SERVER_ERROR": "An internal server error occurred. Please try again later.",
     "NETWORK_ERROR": "Cannot connect to the server. Please check your internet connection.",

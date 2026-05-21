@@ -115,6 +115,35 @@
     "topExpensesTitle": "Top Cele Mai Mari Cheltuieli",
     "noData": "Nu au fost găsite date."
   },
+  "budgets": {
+    "pageTitle": "Bugetele Mele",
+    "addBtn": "+ Buget Nou",
+    "general": "General",
+    "period": {
+      "weekly": "Săptămânal",
+      "monthly": "Lunar",
+      "yearly": "Anual"
+    },
+    "status": "Status",
+    "limit": "Limită",
+    "spent": "Cheltuit",
+    "modifyBtn": "Modifică",
+    "deleteBtn": "Șterge",
+    "status_safe": "Sigur",
+    "status_warning": "Avertisment",
+    "status_exceeded": "Depășit",
+    "status_untouched": "Neatins",
+    "modalAddTitle": "Creează Buget Nou",
+    "modalModifyTitle": "Modifică Buget",
+    "modalDeleteTitle": "Șterge Buget",
+    "modalDeleteDesc": "Ești sigur că vrei să ștergi acest buget? Acțiunea este ireversibilă.",
+    "modalYes": "Da, Șterge",
+    "modalNo": "Anulează",
+    "saveBtn": "Salvează",
+    "selectCategory": "-- General (Toate Categoriile) --",
+    "amountPlaceholder": "Introdu limita bugetului...",
+    "error_BUDGET_ALREADY_EXISTS": "Un buget pentru această categorie și perioadă există deja."
+  },
   "settings": {
     "pageTitle": "Setări",
     "bankSyncTitle": "Sincronizare Bancară",
