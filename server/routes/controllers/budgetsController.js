@@ -208,12 +208,12 @@ const checkBudgetStatus = async (req, res) => {
     try {
         const { month, year } = req.query;
 
-        const currentDate = new Date();
-        const targetMonth = month ? parseInt(month) : currentDate.getMonth() + 1;
-        const targetYear = year ? parseInt(year) : currentDate.getFullYear();
-
-        const startDate = new Date(targetYear, targetMonth - 1, 1);
-        const endDate = new Date(targetYear, targetMonth, 0);
+        // 1. Stabilim data de referință (fie luna cerută, fie ziua de azi)
+        const refDate = new Date();
+        if (month && year) {
+            // Folosim ziua 15 pentru a evita problemele de shiftare pe timezone-uri
+            refDate.setFullYear(parseInt(year), parseInt(month) - 1, 15);
+        }
 
         const budgets = await Budget.findAll({
             where: { 
@@ -229,42 +229,53 @@ const checkBudgetStatus = async (req, res) => {
             return res.status(200).json([]);
         }
 
-        const expenses = await Transaction.findAll({
-            where: {
-                userId: req.user.id,
-                date: { 
-                    [Op.between]: [startDate, endDate] 
-                }
-            },
-            include: [{
-                model: Category,
-                where: { type: 'expense' },
-                attributes: ['id']
-            }]
-        });
+        // 2. Mapăm fiecare buget și calculăm fereastra de timp specifică LUI
+        const budgetStatusesPromises = budgets.map(async (budget) => {
+            let startDate, endDate;
 
-        const expensesByCategory = expenses.reduce((acc, transaction) => {
-            const catId = transaction.categoryId;
-            const amount = parseFloat(transaction.amount);
-            
-            if (!acc[catId]) acc[catId] = 0;
-            acc[catId] += amount;
-            
-            return acc;
-        }, {});
-
-        const budgetStatuses = budgets.map(budget => {
-            const limit = parseFloat(budget.amount);
-            let spent = 0;
-            
-            if(budget.categoryId === null) {
-                spent = Object.values(expensesByCategory).reduce((total, suma) => total + suma, 0); 
-            } else {
-                spent = expensesByCategory[budget.categoryId] || 0;
+            if (budget.period === 'yearly') {
+                startDate = new Date(refDate.getFullYear(), 0, 1);
+                endDate = new Date(refDate.getFullYear(), 11, 31, 23, 59, 59, 999);
+            } 
+            else if (budget.period === 'weekly') {
+                // Logica pentru a găsi Luni - Duminică a săptămânii de referință
+                const currentDay = new Date(refDate);
+                const dayOfWeek = currentDay.getDay(); // 0 este Duminică, 1 este Luni
+                const diffToMonday = currentDay.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+                
+                startDate = new Date(currentDay.setDate(diffToMonday));
+                startDate.setHours(0, 0, 0, 0);
+                
+                endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 6);
+                endDate.setHours(23, 59, 59, 999);
+            } 
+            else {
+                // Default: 'monthly'
+                startDate = new Date(refDate.getFullYear(), refDate.getMonth(), 1);
+                endDate = new Date(refDate.getFullYear(), refDate.getMonth() + 1, 0, 23, 59, 59, 999);
             }
 
-            const remaining = limit - spent;
+            // 3. Facem query pe tranzacții STRICT pentru perioada și categoria acestui buget
+            const transactionWhere = {
+                userId: req.user.id,
+                date: { [Op.between]: [startDate, endDate] }
+            };
 
+            if (budget.categoryId) {
+                transactionWhere.categoryId = budget.categoryId;
+            }
+
+            const expenses = await Transaction.findAll({
+                where: transactionWhere,
+                include: [{ model: Category, where: { type: 'expense' }, attributes: ['id'] }]
+            });
+
+            // 4. Calculăm suma
+            const spent = expenses.reduce((total, t) => total + parseFloat(t.amount), 0);
+            const limit = parseFloat(budget.amount);
+            const remaining = limit - spent;
+            
             let percentage = (spent / limit) * 100;
             percentage = Math.round(percentage * 100) / 100;
 
@@ -291,6 +302,8 @@ const checkBudgetStatus = async (req, res) => {
             };
         });
 
+        // Așteptăm ca toate bugetele să își termine calculele în paralel
+        const budgetStatuses = await Promise.all(budgetStatusesPromises);
         res.status(200).json(budgetStatuses);
 
     } catch (error) {

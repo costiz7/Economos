@@ -9,6 +9,93 @@ import BarChartComponent from '../ChartComponents/BarChartComponent/BarChartComp
 import RadialGaugeComponent from '../ChartComponents/RadialGaugeComponent/RadialGaugeComponent';
 import Transaction from '../Transaction/Transaction';
 
+// --- Separate Fetch Functions for Modularity ---
+
+const fetchTotalsData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/totals${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('TOTALS_ERROR');
+    return await response.json();
+};
+
+const fetchAverageData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/average${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('AVERAGE_ERROR');
+    return await response.json();
+};
+
+const fetchTrendData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/trend${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('TREND_ERROR');
+    return await response.json();
+};
+
+const fetchBreakdownData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/breakdown${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('BREAKDOWN_ERROR');
+    return await response.json();
+};
+
+const fetchMomData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/mom${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('MOM_ERROR');
+    return await response.json();
+};
+
+const fetchTopData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/top${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('TOP_ERROR');
+    return await response.json();
+};
+
+const fetchGaugeData = async (token, queryParamsStr) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/budgets/status${queryParamsStr}`, {
+        headers: { 'token': token }
+    });
+    if (!response.ok) throw new Error('GAUGE_ERROR');
+    
+    const budgetStatuses = await response.json();
+
+    // Prevent crashing if response is not an array
+    if (!Array.isArray(budgetStatuses) || budgetStatuses.length === 0) return 0;
+
+    // 1. Search for the explicit General Monthly Budget
+    const globalBudget = budgetStatuses.find(budget => budget.categoryId === null && budget.period === "monthly");
+    
+    if (globalBudget) {
+        return globalBudget.percentage;
+    }
+
+    // 2. Fallback: Average percentage of exclusively monthly specific budgets
+    let totalLimit = 0;
+    let totalSpent = 0;
+
+    const monthlyBudgets = budgetStatuses.filter(budget => budget.period === "monthly");
+
+    monthlyBudgets.forEach(budget => {
+        totalLimit += parseFloat(budget.limit) || 0;
+        totalSpent += parseFloat(budget.spent) || 0;
+    });
+
+    if (totalLimit === 0) return 0;
+
+    let percentage = (totalSpent / totalLimit) * 100;
+    return Math.round(percentage * 100) / 100;
+};
+
+// --- Main Component ---
+
 function StatisticsContent() {
     const { t } = useLanguage();
     const { setIsLoading } = useLoading();
@@ -45,72 +132,57 @@ function StatisticsContent() {
         budgetGaugeValue: 0
     });
 
-    // Master function to fetch data from all statistics endpoints using Promise.allSettled
+    // Master function to fetch data from all statistics endpoints
     const fetchStatistics = async (filters = appliedFilters) => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
+            if (!token) return;
             
-            // Build query params conditionally
-            let queryParams = '';
-            if (filters.year) queryParams += `?year=${filters.year}`;
-            if (filters.month) queryParams += `${queryParams ? '&' : '?'}month=${filters.month}`;
+            // Translate "Current" (empty string) to actual physical date for the backend
+            const today = new Date();
+            const targetYear = filters.year !== '' ? filters.year : today.getFullYear();
+            const targetMonth = filters.month !== '' ? filters.month : (today.getMonth() + 1);
 
-            // Define all endpoint urls
-            const urls = [
-                `${import.meta.env.VITE_API_URL}/api/transactions/totals${queryParams}`,
-                `${import.meta.env.VITE_API_URL}/api/transactions/average${queryParams}`,
-                `${import.meta.env.VITE_API_URL}/api/transactions/trend${queryParams}`,
-                `${import.meta.env.VITE_API_URL}/api/transactions/breakdown${queryParams}`,
-                `${import.meta.env.VITE_API_URL}/api/transactions/mom${queryParams}`,
-                `${import.meta.env.VITE_API_URL}/api/transactions/top${queryParams}`,
-                `${import.meta.env.VITE_API_URL}/api/budgets/status${queryParams}`
-            ];
+            const queryParams = `?year=${targetYear}&month=${targetMonth}`;
 
             // Execute all requests concurrently via Promise.allSettled
-            // This ensures that if one endpoint fails, the rest of the page still loads perfectly
-            const responses = await Promise.allSettled(
-                urls.map(url => fetch(url, { headers: { 'token': token } }))
-            );
+            const results = await Promise.allSettled([
+                fetchTotalsData(token, queryParams),
+                fetchAverageData(token, queryParams),
+                fetchTrendData(token, queryParams),
+                fetchBreakdownData(token, queryParams),
+                fetchMomData(token, queryParams),
+                fetchTopData(token, queryParams),
+                fetchGaugeData(token, queryParams)
+            ]);
 
-            // Process responses: extract JSON only from successful requests, otherwise return null
-            const jsonPromises = responses.map(res => 
-                (res.status === 'fulfilled' && res.value.ok) ? res.value.json() : Promise.resolve(null)
-            );
+            // Safely extract results and enforce data types to prevent rendering crashes
+            const totalsRes = results[0].status === 'fulfilled' ? results[0].value : {};
+            const averageRes = results[1].status === 'fulfilled' ? results[1].value : {};
+            const trendRes = results[2].status === 'fulfilled' && Array.isArray(results[2].value) ? results[2].value : [];
+            const breakdownRes = results[3].status === 'fulfilled' && Array.isArray(results[3].value) ? results[3].value : [];
+            const momRes = results[4].status === 'fulfilled' ? results[4].value : {};
+            const topRes = results[5].status === 'fulfilled' && Array.isArray(results[5].value) ? results[5].value : [];
+            const gaugeRes = results[6].status === 'fulfilled' ? results[6].value : 0;
 
-            // Wait for all JSON parsing to settle
-            const dataResults = await Promise.allSettled(jsonPromises);
-
-            // Map the resolved data, replacing failed ones with null
-            const data = dataResults.map(res => res.status === 'fulfilled' ? res.value : null);
-
-            // Destructure with default fallback values in case any endpoint returned null/failed
-            const totals = data[0] || { income: 0, expense: 0, balance: 0 };
-            const average = data[1] || { dailyAverage: 0 };
-            const trend = data[2] || [];
-            const breakdown = data[3] || [];
-            const mom = data[4] || { currentExpense: 0, previousExpense: 0, percentage: 0, trend: 'flat' };
-            const top = data[5] || [];
-            const budgets = data[6] || [];
-
-            // Calculate global budget consumption gauge dynamically from budget status response
-            let totalLimit = 0;
-            let totalSpent = 0;
-            budgets.forEach(b => {
-                totalLimit += parseFloat(b.limit || 0);
-                totalSpent += parseFloat(b.spent || 0);
-            });
-            const dynamicGauge = totalLimit > 0 ? Math.round((totalSpent / totalLimit) * 100) : 0;
-
-            // Set centralized storage
+            // Set centralized storage with fallbacks
             setStatsData({
-                totals: totals,
-                dailyAverage: average.dailyAverage || 0,
-                trend: trend,
-                breakdown: breakdown,
-                mom: mom,
-                topExpenses: top,
-                budgetGaugeValue: dynamicGauge
+                totals: {
+                    income: totalsRes.income || 0,
+                    expense: totalsRes.expense || 0,
+                    balance: totalsRes.balance || 0
+                },
+                dailyAverage: averageRes.dailyAverage || 0,
+                trend: trendRes,
+                breakdown: breakdownRes,
+                mom: {
+                    currentExpense: momRes.currentExpense || momRes.currentMonthTotal || 0,
+                    previousExpense: momRes.previousExpense || momRes.previousMonthTotal || 0,
+                    trend: momRes.trend || 'flat'
+                },
+                topExpenses: topRes,
+                budgetGaugeValue: gaugeRes
             });
 
         } catch (error) {
@@ -123,7 +195,6 @@ function StatisticsContent() {
     // Fetch metrics on mount
     useEffect(() => {
         fetchStatistics(appliedFilters);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Form submission handler for applying filters
@@ -136,7 +207,7 @@ function StatisticsContent() {
     const handleYearSelect = (yearId) => {
         setSelectedFilters(prev => {
             const newState = { ...prev, year: yearId };
-            if (!yearId) newState.month = ''; // Automatically reset month if year is wiped
+            if (!yearId) newState.month = ''; 
             return newState;
         });
     };
@@ -144,34 +215,47 @@ function StatisticsContent() {
     // === Dropdown Dataset Preparation ===
     const currentYear = new Date().getFullYear();
     const yearData = [
-        { id: '', name: t('statistics.all') || 'All' },
+        { id: '', name: t('statistics.current') },
         ...Array.from({ length: 5 }, (_, i) => ({ id: currentYear - i, name: `${currentYear - i}` }))
     ];
 
     const monthData = [
-        { id: '', name: t('statistics.all') || 'All' },
+        { id: '', name: t('statistics.current') },
         ...Array.from({ length: 12 }, (_, i) => ({ id: i + 1, name: `${i + 1}` }))
     ];
 
     // === Chart Data Transformations ===
+    
+    // Dynamic formatter to handle both daily format and monthly format 
+    // gracefully without squashing points together
+    const formatTrendLabel = (item) => {
+        if (item.day || item.date) {
+            return `${item.day || item.date}/${item.month || ''}`;
+        }
+        return `${item.month || '?'}/${String(item.year || '').slice(-2)}`;
+    };
+
     const incomeTrendData = statsData.trend.map(item => ({
-        label: `${item.month}/${item.year.toString().slice(-2)}`,
-        value: item.income
+        label: formatTrendLabel(item),
+        value: parseFloat(item.income || item.totalAmount || 0)
     }));
 
     const expenseTrendData = statsData.trend.map(item => ({
-        label: `${item.month}/${item.year.toString().slice(-2)}`,
-        value: item.expense
+        label: formatTrendLabel(item),
+        value: parseFloat(item.expense || item.totalAmount || 0)
     }));
 
-    const breakdownDonutData = statsData.breakdown.map(item => ({
-        label: t(`categories.${item.category}`) !== `categories.${item.category}` ? t(`categories.${item.category}`) : item.category,
-        value: item.total
-    }));
+    const breakdownDonutData = statsData.breakdown.map(item => {
+        const categoryLabel = item.category || item.categoryName || 'Unknown';
+        return {
+            label: t(`categories.${categoryLabel}`) !== `categories.${categoryLabel}` ? t(`categories.${categoryLabel}`) : categoryLabel,
+            value: parseFloat(item.total || item.totalAmount || 0)
+        };
+    });
 
     const momBarData = [
-        { label: t('statistics.previousMonth') || 'Prev Month', value: statsData.mom.previousExpense },
-        { label: t('statistics.currentMonth') || 'Current Month', value: statsData.mom.currentExpense }
+        { label: t('statistics.previousMonth') || 'Prev Month', value: parseFloat(statsData.mom.previousExpense) || 0 },
+        { label: t('statistics.currentMonth') || 'Current Month', value: parseFloat(statsData.mom.currentExpense) || 0 }
     ];
 
     return (
@@ -188,7 +272,7 @@ function StatisticsContent() {
                         <Dropdown 
                             dataArr={yearData} 
                             width="100%" 
-                            displayLabel={t('statistics.all') || 'All'} 
+                            displayLabel={t('statistics.current')} 
                             onSelect={handleYearSelect} 
                             labelKey="name"
                         />
@@ -198,7 +282,7 @@ function StatisticsContent() {
                         <Dropdown 
                             dataArr={monthData} 
                             width="100%" 
-                            displayLabel={t('statistics.all') || 'All'} 
+                            displayLabel={t('statistics.current')} 
                             onSelect={(id) => setSelectedFilters({...selectedFilters, month: id})}
                             labelKey="name"
                             disabled={!selectedFilters.year}
@@ -239,8 +323,8 @@ function StatisticsContent() {
                     <LineChartComponent 
                         data={incomeTrendData} 
                         color="var(--green-color)" 
-                        gradientColor="var(--green-color)" // Throws a clean green gradient underneath
-                        lineThickness={7} // Makes the stroke thicker and updates interactive dots automatically
+                        gradientColor="var(--green-color)" 
+                        lineThickness={7} 
                         unit={userCurrency} 
                     />
                 </div>
@@ -251,8 +335,8 @@ function StatisticsContent() {
                     <LineChartComponent 
                         data={expenseTrendData} 
                         color="var(--red-color)" 
-                        gradientColor="var(--red-color)" // Throws a clean red gradient underneath
-                        lineThickness={7} // Makes the stroke thicker and updates interactive dots automatically
+                        gradientColor="var(--red-color)" 
+                        lineThickness={7} 
                         unit={userCurrency} 
                     />
                 </div>
@@ -291,7 +375,7 @@ function StatisticsContent() {
                 </div>
             </div>
 
-            {/* 5. Top Biggest Transactions Subsection using Transaction component */}
+            {/* 5. Top Biggest Transactions Subsection */}
             <div className="statistics-top-card">
                 <div className="statistics-card-header">
                     <h2>{t('statistics.topExpensesTitle') || 'Top Biggest Expenses'}</h2>
@@ -301,9 +385,9 @@ function StatisticsContent() {
                         statsData.topExpenses.map(tx => {
                             const formattedTx = {
                                 ...tx,
-                                name: tx.Category?.name,
-                                iconFile: tx.Category?.iconFile,
-                                type: tx.Category?.type
+                                name: tx.Category?.name || tx.name,
+                                iconFile: tx.Category?.iconFile || tx.iconFile,
+                                type: tx.Category?.type || tx.type
                             };
                             return <Transaction key={tx.id} transaction={formattedTx} user={user} />;
                         })

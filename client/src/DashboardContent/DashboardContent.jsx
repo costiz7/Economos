@@ -78,7 +78,9 @@ const fetchGaugeData = async (token) => {
     let totalLimit = 0;
     let totalSpent = 0;
 
-    budgetStatuses.forEach(budget => {
+    const monthlyBudgets = budgetStatuses.filter(budget => budget.period === "monthly");
+
+    monthlyBudgets.forEach(budget => {
         totalLimit += parseFloat(budget.limit) || 0;
         totalSpent += parseFloat(budget.spent) || 0;
     });
