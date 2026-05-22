@@ -142,7 +142,13 @@
     "saveBtn": "Salvează",
     "selectCategory": "-- General (Toate Categoriile) --",
     "amountPlaceholder": "Introdu limita bugetului...",
-    "error_BUDGET_ALREADY_EXISTS": "Un buget pentru această categorie și perioadă există deja."
+    "error_BUDGET_ALREADY_EXISTS": "Un buget pentru această categorie și perioadă există deja.",
+    "error_AMOUNT_GREATER_THAN_ZERO": "Suma trebuie să fie mai mare decât 0.",
+    "error_CONNECTION_FAILED": "Conexiunea la server a eșuat.",
+    "error_SERVER_ERROR": "A apărut o eroare de server. Te rugăm să încerci din nou.",
+    "error_MISSING_AMOUNT": "Lipsește limita bugetului.",
+    "error_BUDGET_NOT_FOUND": "Bugetul specificat nu a fost găsit.",
+    "error_BUDGET_NOT_FOUND_OR_UNAUTHORIZED": "Bugetul nu a fost găsit sau accesul este neautorizat."
   },
   "settings": {
     "pageTitle": "Setări",

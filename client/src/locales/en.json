@@ -154,7 +154,13 @@
     "saveBtn": "Save",
     "selectCategory": "-- General (All Categories) --",
     "amountPlaceholder": "Enter limit amount...",
-    "error_BUDGET_ALREADY_EXISTS": "A budget for this category and period already exists."
+    "error_BUDGET_ALREADY_EXISTS": "A budget for this category and period already exists.",
+    "error_AMOUNT_GREATER_THAN_ZERO": "Amount must be greater than 0.",
+    "error_CONNECTION_FAILED": "Failed to connect to the server.",
+    "error_SERVER_ERROR": "A server error occurred. Please try again.",
+    "error_MISSING_AMOUNT": "The budget amount is missing.",
+    "error_BUDGET_NOT_FOUND": "The specified budget was not found.",
+    "error_BUDGET_NOT_FOUND_OR_UNAUTHORIZED": "Budget not found or unauthorized access."
   },
   "errors": {
     "SERVER_ERROR": "An internal server error occurred. Please try again later.",

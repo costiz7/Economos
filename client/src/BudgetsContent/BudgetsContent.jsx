@@ -27,14 +27,18 @@ function BudgetsContent() {
             setIsLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const [budgetsRes, categoriesRes] = await Promise.all([
+
+                const [budgetsResObj, categoriesResObj] = await Promise.allSettled([
                     fetch(`${import.meta.env.VITE_API_URL}/api/budgets/status`, { headers: { 'token': token } }),
                     fetch(`${import.meta.env.VITE_API_URL}/api/categories`, { headers: { 'token': token } })
                 ]);
 
-                if (budgetsRes.ok) setBudgets(await budgetsRes.json());
-                if (categoriesRes.ok) {
-                    const data = await categoriesRes.json();
+                if (budgetsResObj.status === 'fulfilled' && budgetsResObj.value.ok) {
+                    setBudgets(await budgetsResObj.value.json());
+                }
+
+                if (categoriesResObj.status === 'fulfilled' && categoriesResObj.value.ok) {
+                    const data = await categoriesResObj.value.json();
                     setCategories(data.filter(c => c.type === 'expense'));
                 }
             } catch (error) {
@@ -75,7 +79,11 @@ function BudgetsContent() {
 
     const handleSaveBudget = async () => {
         setModalError("");
-        if (!budgetAmount || budgetAmount <= 0) return setModalError("Amount must be greater than 0");
+        
+        // 1. Translated frontend validation
+        if (!budgetAmount || budgetAmount <= 0) {
+            return setModalError(t('budgets.error_AMOUNT_GREATER_THAN_ZERO'));
+        }
 
         setIsLoading(true);
         try {
@@ -105,14 +113,16 @@ function BudgetsContent() {
                 if (refreshRes.ok) setBudgets(await refreshRes.json());
                 closeModal();
             } else {
+                // 2. Translated backend errors with a translated fallback
                 if (data.errorCode) {
                     setModalError(t(`budgets.error_${data.errorCode}`));
                 } else {
-                    setModalError(data.error || "Server error");
+                    setModalError(t('budgets.error_SERVER_ERROR'));
                 }
             }
         } catch (error) {
-            setModalError("Failed to connect to server");
+            // 3. Translated network error
+            setModalError(t('budgets.error_CONNECTION_FAILED'));
         } finally {
             setIsLoading(false);
         }
@@ -131,9 +141,17 @@ function BudgetsContent() {
             if (response.ok) {
                 setBudgets(budgets.filter(b => b.budgetId !== selectedBudget.budgetId));
                 closeModal();
+            } else {
+                // Handle delete errors gracefully too
+                const data = await response.json();
+                if (data.errorCode) {
+                    setModalError(t(`budgets.error_${data.errorCode}`));
+                } else {
+                    setModalError(t('budgets.error_SERVER_ERROR'));
+                }
             }
         } catch (error) {
-            console.error("Delete failed:", error);
+            setModalError(t('budgets.error_CONNECTION_FAILED'));
         } finally {
             setIsLoading(false);
         }

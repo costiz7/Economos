@@ -25,11 +25,13 @@
 .progress-current {
     font-weight: 700;
     color: var(--black-color);
+    letter-spacing: 1px;
 }
 
 .progress-max {
-    font-weight: 600;
-    color: #94a3b8;
+    font-weight: 700;
+    color: var(--black-color);
+    letter-spacing: 1px;
 }
 
 /* --- TRACK & FILL --- */

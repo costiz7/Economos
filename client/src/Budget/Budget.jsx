@@ -15,7 +15,6 @@ function Budget({ budget, user, onOpenModifyModal, onOpenDeleteModal }) {
     const isGeneral = budget.categoryId === null;
     const periodText = t(`budgets.period.${budget.period}`);
 
-    // Construim titlul pe baza numelui returnat de status endpoint
     let title = '';
     if (isGeneral) {
         title = `${t('budgets.general')} ${periodText}`;
@@ -50,7 +49,7 @@ function Budget({ budget, user, onOpenModifyModal, onOpenDeleteModal }) {
                         maxValue={budget.limit}
                         color={statusColor}
                         height="16px" 
-                        unit={user?.currency || "RON"}
+                        unit={user?.currency}
                         showLabels={true} 
                     />
                 </div>
