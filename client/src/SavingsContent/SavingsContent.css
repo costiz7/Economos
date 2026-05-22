@@ -1,0 +1,244 @@
+.savings-content-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.savings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 4px solid var(--black-color);
+}
+
+.savings-header h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--black-color);
+    letter-spacing: 1px;
+}
+
+.savings-header-btn {
+    padding: 10px 20px;
+    font-family: var(--text-font);
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    background-color: var(--black-color);
+    color: var(--white-color);
+    border: solid 3px var(--black-color);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.savings-header-btn:hover {
+    filter: brightness(0.7);
+}
+
+.savings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* =========================================================
+   MODAL STYLES
+========================================================= */
+
+.savings-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    animation: fadeInModalOverlay 400ms ease-out forwards;
+}
+
+.savings-modal-overlay.closing {
+    animation: fadeOutModalOverlay 400ms ease-in forwards;
+}
+
+.savings-modal-card {
+    background-color: var(--white-color);
+    border: 4px solid var(--black-color);
+    border-radius: 20px;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideInUpModal 400ms ease-out forwards;
+}
+
+.savings-modal-overlay.closing .savings-modal-card {
+    animation: slideOutUpModal 400ms ease-in forwards;
+}
+
+.savings-modal-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--black-color);
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.modal-subtitle-context {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--black-color);
+    margin: 5px 0 20px 0;
+    opacity: 0.8;
+}
+
+.savings-modal-card h3 + .savings-form-group {
+    margin-top: 25px;
+}
+
+.savings-modal-error {
+    width: 100%;
+    color: var(--red-color);
+    font-weight: 900;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+/* FLOATING LABEL INPUT MECHANICS */
+.savings-form-group {
+    width: 100%;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.savings-form-input {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.savings-form-input > input {
+    width: 100%;
+    height: 50px;
+    border: solid 3px var(--black-color);
+    border-radius: 5px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
+    padding: 5px 15px;
+    font-family: var(--text-font);
+    color: var(--black-color);
+    background-color: var(--white-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.savings-form-input > input:focus {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
+}
+
+.savings-form-input > label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-family: var(--text-font);
+    color: var(--black-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background-color: var(--white-color);
+    padding: 0px 5px;
+}
+
+.savings-form-input > input:focus ~ label,
+.savings-form-input > input:not(:placeholder-shown) ~ label {
+    top: 0px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+/* Forces input labels like type="date" to stay locked up top nicely */
+.savings-form-input.label-always-floating > label {
+    top: 0px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+/* BUTTONS ROW STYLE */
+.savings-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.savings-modal-btn {
+    width: 100%;
+    padding: 10px 0px;
+    font-family: var(--text-font);
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--black-color);
+    background-color: var(--white-color);
+    border: solid 3px var(--black-color);
+    border-radius: 5px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.savings-modal-btn.primary {
+    background-color: var(--black-color);
+    color: var(--white-color);
+}
+
+.savings-modal-btn.delete-confirm-btn {
+    background-color: var(--black-color);
+    color: var(--white-color);
+    border-color: var(--black-color);
+}
+
+.savings-modal-btn:hover {
+    filter: brightness(0.7);
+}
+
+/* Keyframes Setup */
+@keyframes fadeInModalOverlay {
+    from { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+    to { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); }
+}
+@keyframes fadeOutModalOverlay {
+    from { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); }
+    to { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+}
+@keyframes slideInUpModal {
+    from { transform: translateY(100vh); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideOutUpModal {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100vh); opacity: 0; }
+}

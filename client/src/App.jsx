@@ -7,6 +7,7 @@ import TransactionsContent from "./TransactionsContent/TransactionsContent.jsx";
 import StatisticsContent from "./StatisticsContent/StatisticsContent.jsx";
 import SettingsContent from "./SettingsContent/SettingsContent.jsx";
 import BudgetsContent from "./BudgetsContent/BudgetsContent.jsx";
+import SavingsContent from "./SavingsContent/SavingsContent.jsx";
 
 function App() {
 
@@ -21,7 +22,7 @@ function App() {
               <Route path="/dashboard" element={ <DashboardContent /> }/>
               <Route path="/transactions" element={ <TransactionsContent /> }/>
               <Route path="/statistics" element={ <StatisticsContent /> }/>
-              <Route path="/savings" element=""/>
+              <Route path="/savings" element={ <SavingsContent /> }/>
               <Route path="/budgets" element={ <BudgetsContent /> } />
               <Route path="/myprofile" element=""/>
               <Route path="/settings" element={ <SettingsContent /> }/>
