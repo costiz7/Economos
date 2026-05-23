@@ -45,11 +45,12 @@
   "dashboard": {
     "welcome": "Salut",
     "distributionTitle": "Cheltuielile acestei luni",
-    "evolutionTitle": "Lună peste lună",
+    "balanceTitle": "Balanță Disponibilă",
     "budgetConsumptionTitle": "Consumul bugetului lunar",
-    "lastMonthLabel": "Luna Trecută",
-    "thisMonthLabel": "Luna Asta",
-    "recentTitle": "Tranzacții recente"
+    "recentTitle": "Tranzacții recente",
+    "totalIncome": "Total Venituri",
+    "totalExpense": "Total Cheltuieli",
+    "totalSaved": "Total Economisit"
   },
   "transaction": {
     "details": "Detalii",

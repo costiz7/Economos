@@ -72,8 +72,6 @@
     grid-template-columns: max-content 1fr;
     gap: 10px 20px; 
     align-items: center;
-    padding-top: 15px;
-    border-top: 2px dashed var(--black-color);
 }
 
 .body-detail-label {

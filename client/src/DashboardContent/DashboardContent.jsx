@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import './DashboardContent.css';
 import DonutChartComponent from '../ChartComponents/DonutChartComponent/DonutChartComponent';
 import RadialGaugeComponent from '../ChartComponents/RadialGaugeComponent/RadialGaugeComponent';
-import BarChartComponent from '../ChartComponents/BarChartComponent/BarChartComponent';
-import CategoryIcon from '../Icons/Categories/CategoryIcon';
 import { useLanguage } from '../context/LanguageContext';
 import { useLoading } from '../context/LoadingContext';
 import Transaction from '../Transaction/Transaction';
@@ -50,21 +48,19 @@ const fetchDonutData = async (token, t) => {
     }));
 }
 
-const fetchBarData = async (token) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/mom`, {
+const fetchGlobalBalance = async (token) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/global-balance`, {
         headers: { 'token': token }
     });
-    if (!response.ok) throw new Error('BAR_ERROR');
-    
-    // Return raw data so we can apply dynamic translations in the component rendering
-    return await response.json(); 
+    if (!response.ok) throw new Error("GLOBAL_BALANCE_ERROR");
+    return await response.json();
 };
 
 const fetchGaugeData = async (token) => {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/budgets/status`, {
         headers: { 'token': token }
     });
-    if (!response.ok) throw new Error('GAUGE_ERROR');
+    if (!response.ok) throw new Error("GAUGE_ERROR");
     const budgetStatuses = await response.json();
 
     if (!budgetStatuses || budgetStatuses.length === 0) return 0;
@@ -96,22 +92,25 @@ function DashboardContent() {
     const { t } = useLanguage();
     const { setIsLoading } = useLoading();
     
-    const [user, setUser] = useState(() => {
+    const [user] = useState(() => {
         const storedUser = localStorage.getItem("user");
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
     const [dashboardData, setDashboardData] = useState({
         donut: [],
-        bar: { previousExpense: 0, currentExpense: 0 },
+        balance: { availableBalance: 0 },
         gauge: 0,
         recent: []
     });
 
+    // State-ul local folosit exclusiv pentru randarea cifrei animate
+    const [displayBalance, setDisplayBalance] = useState(0);
+
     useEffect(() => {
         const loadDashboardData = async () => {
             setIsLoading(true);
-            const token = localStorage.getItem('token'); 
+            const token = localStorage.getItem("token"); 
 
             if (!token) {
                 console.error("Missing authentication token!");
@@ -119,30 +118,60 @@ function DashboardContent() {
                 return;
             }
 
-            const results = await Promise.allSettled([
-                fetchDonutData(token, t),
-                fetchBarData(token),
-                fetchGaugeData(token),
-                fetchRecentTransactions(token)
-            ]);
+            try {
+                const results = await Promise.allSettled([
+                    fetchDonutData(token, t),
+                    fetchGlobalBalance(token),
+                    fetchGaugeData(token),
+                    fetchRecentTransactions(token)
+                ]);
 
-            setDashboardData({
-                donut: results[0].status === 'fulfilled' ? results[0].value : [],
-                bar: results[1].status === 'fulfilled' ? results[1].value : { previousExpense: 0, currentExpense: 0 },
-                gauge: results[2].status === 'fulfilled' ? results[2].value : 0,
-                recent: results[3].status === 'fulfilled' ? results[3].value : []
-            });
-
-            setIsLoading(false);
+                setDashboardData({
+                    donut: results[0].status === 'fulfilled' ? results[0].value : [],
+                    balance: results[1].status === 'fulfilled' ? results[1].value : { availableBalance: 0 },
+                    gauge: results[2].status === 'fulfilled' ? results[2].value : 0,
+                    recent: results[3].status === 'fulfilled' ? results[3].value : []
+                });
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         loadDashboardData();
-    }, [setIsLoading]);
+    }, [setIsLoading, t]);
+
+    // EFECTUL PENTRU ANIMAȚIE: Rulează numărătoarea fluidă în fix 200ms
+    useEffect(() => {
+        const targetValue = parseFloat(dashboardData.balance.availableBalance) || 0;
+        if (targetValue === 0) {
+            setDisplayBalance(0);
+            return;
+        }
+
+        const duration = 200;      // 200ms timp total al animației
+        const frameRate = 16;      // Frecvența cadrelor (~60 FPS adică un cadru la ~16ms)
+        const totalSteps = Math.max(1, Math.floor(duration / frameRate));
+        const increment = targetValue / totalSteps;
+        let currentStep = 0;
+
+        const timer = setInterval(() => {
+            currentStep++;
+            if (currentStep >= totalSteps) {
+                setDisplayBalance(targetValue); // Ne asigurăm că setăm valoarea exactă la final
+                clearInterval(timer);
+            } else {
+                setDisplayBalance(prev => prev + increment);
+            }
+        }, frameRate);
+
+        return () => clearInterval(timer); // Curățăm intervalul în caz de unmount
+    }, [dashboardData.balance.availableBalance]);
 
     return (
         <div className="dashboard-content-wrapper">
             <div className="welcome-message">
-                {/* 2. Acum folosim obiectul `user` direct, mult mai elegant */}
                 <h1>{t('dashboard.welcome')}, {user ? user.username : ""}</h1>
             </div>
             
@@ -157,17 +186,14 @@ function DashboardContent() {
                 
                 <div id="dashboard-upper-secondcard" className="dashboard-upper-card">
                     <div className="dashboard-upper-card-header">
-                        <h2>{t('dashboard.evolutionTitle')}</h2>
+                        <h2>{t('dashboard.balanceTitle') || 'Available Balance'}</h2>
                     </div>
-                    <BarChartComponent 
-                        data={[
-                            { label: t('dashboard.lastMonthLabel'), value: dashboardData.bar.previousExpense },
-                            { label: t('dashboard.thisMonthLabel'), value: dashboardData.bar.currentExpense }
-                        ]} 
-                        gap='60px'
-                        barThickness='100px'
-                        colors = {["var(--red-color)", "var(--blue-color)"]} 
-                    />
+                    
+                    <div className="dashboard-balance-content standalone">
+                        <span className="dashboard-balance-amount">
+                            {parseFloat(displayBalance).toFixed(2)} {user?.currency || 'RON'}
+                        </span>
+                    </div>
                 </div>
                 
                 <div id="dashboard-upper-thirdcard" className="dashboard-upper-card">

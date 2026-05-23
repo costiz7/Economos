@@ -139,7 +139,7 @@ function SavingsContent() {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/savings/${selectedGoal.id}/add`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'token': token },
-                body: JSON.stringify({ amount: parsedAmount })
+                body: JSON.stringify({ amountToAdd: parsedAmount })
             });
 
             const data = await response.json();
@@ -171,7 +171,7 @@ function SavingsContent() {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/savings/${selectedGoal.id}/withdraw`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'token': token },
-                body: JSON.stringify({ amount: parsedAmount })
+                body: JSON.stringify({ amountToWithdraw: parsedAmount })
             });
 
             const data = await response.json();

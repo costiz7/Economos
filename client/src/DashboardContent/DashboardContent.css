@@ -69,6 +69,35 @@
     flex-direction: column;
 }
 
+/* ==========================================================
+   STILURI NOI PENTRU BALANȚA DISPONIBILĂ (STANDALONE)
+   ========================================================== */
+
+.dashboard-balance-content.standalone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    flex: 1; /* Ocupă tot spațiul vertical rămas în card */
+    padding: 10px;
+}
+
+/* Dimensiune mărită (2.2rem) pentru a deveni punctul central al cardului */
+.dashboard-balance-amount {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--black-color);
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 15px 25px;
+    border-radius: 8px;
+    border: 3px dashed var(--black-color);
+    word-break: break-all;
+    width: 95%;
+    display: inline-block;
+    transition: color 0.2s ease-in-out;
+}
+
 @media (max-width: 500px) {
     .dashboard-content-wrapper {
         gap: 10px;
@@ -83,28 +112,12 @@
         border-bottom: 4px solid var(--black-color);
         border-radius: 0px;
         box-shadow: none;
-        min-width: 100%;
+        min-height: 250px;
     }
 
     .dashboard-lower-card {
         border: none;
         border-radius: 0px;
         box-shadow: none;
-        min-width: 100%;
-    }
-
-    .dashboard-lower-card > .dashboard-lower-card-header {
-        font-size: 0.8rem;
-        margin-top: 10px;
-    }
-
-    .dashboard-upper-card > .dashboard-upper-card-header {
-        font-size: 0.8rem;
-        margin-top: 10px;
-    }
-
-    .welcome-message {
-        font-size: 0.8rem;
-        padding-left: 10px;
     }
 }

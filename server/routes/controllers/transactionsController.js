@@ -1,4 +1,4 @@
-import { Category, Transaction, User } from "../../database/associations.js";
+import { Category, Transaction, User, SavingsGoal } from "../../database/associations.js";
 import { Op } from "sequelize";
 import { GoogleGenAI } from '@google/genai';
 
@@ -1108,6 +1108,45 @@ const syncDailyTransactions = async (req, res) => {
     }
 };
 
+const getGlobalAvailableBalance = async (req, res) => {
+    try {
+        const transactions = await Transaction.findAll({
+            where: { userId: req.user.id },
+            include: [{ model: Category, attributes: ['type'] }]
+        });
+
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        transactions.forEach(transaction => {
+            const amount = parseFloat(transaction.amount);
+            if(transaction.Category.type === 'income') {
+                totalIncome += amount;
+            } else if(transaction.Category.type === 'expense') {
+                totalExpense += amount;
+            }
+        });
+
+        const savings = await SavingsGoal.findAll({
+            where: { userId: req.user.id }
+        });
+
+        const totalSaved = savings.reduce((acc, goal) => acc + parseFloat(goal.currentAmount), 0);
+
+        const availableBalance = totalIncome - totalExpense - totalSaved;
+
+        res.status(200).json({
+            totalIncome,
+            totalExpense,
+            totalSaved,
+            availableBalance
+        });
+    } catch (error) {
+        res.status(500).json({ errorCode: 'SERVER_ERROR', error: error.message });
+    }
+}
+
+
 export default { 
     getTransactions, 
     addTransaction, 
@@ -1120,5 +1159,6 @@ export default {
     getRecentTransactions,
     getDailyAverage,
     importBankTransactions,
-    syncDailyTransactions
+    syncDailyTransactions,
+    getGlobalAvailableBalance
  };

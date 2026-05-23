@@ -45,11 +45,12 @@
   "dashboard": {
     "welcome": "Hello",
     "distributionTitle": "This month's expenses",
-    "evolutionTitle": "Month over month",
+    "balanceTitle": "Available Balance",
     "budgetConsumptionTitle": "Monthly budget consumption",
-    "lastMonthLabel": "Last Month",
-    "thisMonthLabel": "This Month",
-    "recentTitle": "Recent transactions"
+    "recentTitle": "Recent transactions",
+    "totalIncome": "Total Incomes",
+    "totalExpense": "Total Expenses",
+    "totalSaved": "Total Saved"
   },
   "transaction": {
     "details": "Details",
