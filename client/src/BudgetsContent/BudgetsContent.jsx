@@ -9,19 +9,23 @@ function BudgetsContent() {
     const { t } = useLanguage();
     const { setIsLoading } = useLoading();
 
+    //Global data states
     const [user] = useState(() => JSON.parse(localStorage.getItem("user")));
     const [budgets, setBudgets] = useState([]);
     const [categories, setCategories] = useState([]);
 
+    //Modal states
     const [activeModal, setActiveModal] = useState(null); 
     const [isClosing, setIsClosing] = useState(false);
     const [modalError, setModalError] = useState("");
 
+    //Form states in modal
     const [selectedCategory, setSelectedCategory] = useState(null); 
     const [selectedPeriod, setSelectedPeriod] = useState("monthly");
     const [budgetAmount, setBudgetAmount] = useState("");
     const [selectedBudget, setSelectedBudget] = useState(null);
 
+    //Fetching budgets and categories lists
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
@@ -50,6 +54,7 @@ function BudgetsContent() {
         fetchData();
     }, [setIsLoading]);
 
+    //Function for when opening a modal
     const openModal = (modalId, budget = null) => {
         setIsClosing(false);
         setModalError("");
@@ -164,17 +169,17 @@ function BudgetsContent() {
     });
 
     const categoriesDropdownData = [
-        { id: 'general', denumire: t('budgets.selectCategory') },
+        { id: 'general', label: t('budgets.selectCategory') },
         ...categories.map(cat => ({
             id: cat.id,
-            denumire: t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name
+            label: t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name
         }))
     ];
 
     const periodsDropdownData = [
-        { id: 'monthly', denumire: t('budgets.period.monthly') },
-        { id: 'weekly', denumire: t('budgets.period.weekly') },
-        { id: 'yearly', denumire: t('budgets.period.yearly') }
+        { id: 'monthly', label: t('budgets.period.monthly') },
+        { id: 'weekly', label: t('budgets.period.weekly') },
+        { id: 'yearly', label: t('budgets.period.yearly') }
     ];
 
     return (
@@ -186,7 +191,7 @@ function BudgetsContent() {
                 </button>
             </div>
 
-            <div className="budgets-list">
+            <div className="budgets-page-list">
                 {sortedBudgets.map(budget => (
                     <Budget 
                         key={budget.budgetId} 
@@ -199,43 +204,43 @@ function BudgetsContent() {
             </div>
 
             {activeModal && (
-                <div className={`budget-modal-overlay ${isClosing ? 'closing' : ''}`}>
-                    <div className="budget-modal-card">
+                <div className={`budget-page-modal-overlay ${isClosing ? 'budget-page-modal-closing' : ''}`}>
+                    <div className="budget-page-modal-card">
                         
                         {(activeModal === 'ADD' || activeModal === 'MODIFY') && (
                             <>
                                 <h3>{activeModal === 'ADD' ? t('budgets.modalAddTitle') : t('budgets.modalModifyTitle')}</h3>
                                 
-                                {modalError && <div className="budget-modal-error">{modalError}</div>}
+                                {modalError && <div className="budget-page-modal-error">{modalError}</div>}
                                 
-                                <div className="budget-form-group" style={{ zIndex: 12 }}>
+                                <div className="budget-page-form-group budget-page-z-index-high">
                                     <Dropdown 
                                         key={`cat-${activeModal}-${selectedCategory}`} 
                                         dataArr={categoriesDropdownData}
                                         width="100%"
                                         height="50px"
-                                        displayLabel={categoriesDropdownData.find(c => c.id === (selectedCategory || 'general'))?.denumire}
-                                        labelKey="denumire"
+                                        displayLabel={categoriesDropdownData.find(c => c.id === (selectedCategory || 'general'))?.label}
+                                        labelKey="label"
                                         onSelect={(id) => setSelectedCategory(id === 'general' ? null : id)}
                                         disabled={activeModal === 'MODIFY'}
                                     />
                                 </div>
 
-                                <div className="budget-form-group" style={{ zIndex: 11 }}>
+                                <div className="budget-page-form-group budget-page-z-index-medium">
                                     <Dropdown 
                                         key={`per-${activeModal}-${selectedPeriod}`}
                                         dataArr={periodsDropdownData}
                                         width="100%"
                                         height="50px"
-                                        displayLabel={periodsDropdownData.find(p => p.id === selectedPeriod)?.denumire}
-                                        labelKey="denumire"
+                                        displayLabel={periodsDropdownData.find(p => p.id === selectedPeriod)?.label}
+                                        labelKey="label"
                                         onSelect={(id) => setSelectedPeriod(id)}
                                         disabled={activeModal === 'MODIFY'}
                                     />
                                 </div>
 
-                                <div className="budget-form-group">
-                                    <div className="budget-form-input">
+                                <div className="budget-page-form-group">
+                                    <div className="budget-page-form-input">
                                         <input type="number" 
                                                 id="budgetAmount" 
                                                 value={budgetAmount}
@@ -245,9 +250,9 @@ function BudgetsContent() {
                                     </div>
                                 </div>
 
-                                <div className="budget-modal-actions">
-                                    <button className="budget-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
-                                    <button className="budget-modal-btn primary" onClick={handleSaveBudget}>{t('budgets.saveBtn')}</button>
+                                <div className="budget-page-modal-actions">
+                                    <button className="budget-page-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
+                                    <button className="budget-page-modal-btn budget-page-modal-btn-primary" onClick={handleSaveBudget}>{t('budgets.saveBtn')}</button>
                                 </div>
                             </>
                         )}
@@ -255,12 +260,12 @@ function BudgetsContent() {
                         {activeModal === 'DELETE' && (
                             <>
                                 <h3>{t('budgets.modalDeleteTitle')}</h3>
-                                <p style={{ color: 'var(--black-color)', textAlign: 'center', marginBottom: '25px', fontWeight: '500' }}>
+                                <p className="budget-page-delete-text">
                                     {t('budgets.modalDeleteDesc')}
                                 </p>
-                                <div className="budget-modal-actions">
-                                    <button className="budget-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
-                                    <button className="budget-modal-btn delete-confirm-btn" onClick={handleDeleteBudget}>
+                                <div className="budget-page-modal-actions">
+                                    <button className="budget-page-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
+                                    <button className="budget-page-modal-btn budget-page-modal-btn-delete" onClick={handleDeleteBudget}>
                                         {t('budgets.modalYes')}
                                     </button>
                                 </div>

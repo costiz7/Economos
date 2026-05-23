@@ -104,9 +104,6 @@ function DashboardContent() {
         recent: []
     });
 
-    // State-ul local folosit exclusiv pentru randarea cifrei animate
-    const [displayBalance, setDisplayBalance] = useState(0);
-
     useEffect(() => {
         const loadDashboardData = async () => {
             setIsLoading(true);
@@ -142,33 +139,6 @@ function DashboardContent() {
         loadDashboardData();
     }, [setIsLoading, t]);
 
-    // EFECTUL PENTRU ANIMAȚIE: Rulează numărătoarea fluidă în fix 200ms
-    useEffect(() => {
-        const targetValue = parseFloat(dashboardData.balance.availableBalance) || 0;
-        if (targetValue === 0) {
-            setDisplayBalance(0);
-            return;
-        }
-
-        const duration = 200;      // 200ms timp total al animației
-        const frameRate = 16;      // Frecvența cadrelor (~60 FPS adică un cadru la ~16ms)
-        const totalSteps = Math.max(1, Math.floor(duration / frameRate));
-        const increment = targetValue / totalSteps;
-        let currentStep = 0;
-
-        const timer = setInterval(() => {
-            currentStep++;
-            if (currentStep >= totalSteps) {
-                setDisplayBalance(targetValue); // Ne asigurăm că setăm valoarea exactă la final
-                clearInterval(timer);
-            } else {
-                setDisplayBalance(prev => prev + increment);
-            }
-        }, frameRate);
-
-        return () => clearInterval(timer); // Curățăm intervalul în caz de unmount
-    }, [dashboardData.balance.availableBalance]);
-
     return (
         <div className="dashboard-content-wrapper">
             <div className="welcome-message">
@@ -191,7 +161,7 @@ function DashboardContent() {
                     
                     <div className="dashboard-balance-content standalone">
                         <span className="dashboard-balance-amount">
-                            {parseFloat(displayBalance).toFixed(2)} {user?.currency || 'RON'}
+                            {parseFloat(dashboardData.balance.availableBalance || 0).toFixed(2)} {user?.currency || 'RON'}
                         </span>
                     </div>
                 </div>

@@ -39,174 +39,193 @@
     filter: brightness(0.7);
 }
 
-.budgets-list {
+.budgets-page-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    width: 100%;
 }
 
-.budget-modal-overlay {
+/* Modal Layout styles via Flexbox exclusively */
+.budget-page-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    animation: fadeInModalOverlay 400ms ease-out forwards;
+    animation: fadeInModalOverlay 0.3s ease forwards;
 }
 
-.budget-modal-overlay.closing {
-    animation: fadeOutModalOverlay 400ms ease-in forwards;
+.budget-page-modal-overlay.budget-page-modal-closing {
+    animation: fadeOutModalOverlay 0.3s ease forwards;
 }
 
-.budget-modal-card {
+.budget-page-modal-card {
     background-color: var(--white-color);
     border: 4px solid var(--black-color);
-    border-radius: 20px;
-    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    width: 90%;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
     max-width: 450px;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    animation: slideInUpModal 400ms ease-out forwards;
+    gap: 20px;
+    animation: scaleInModalCard 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.budget-modal-overlay.closing .budget-modal-card {
-    animation: slideOutUpModal 400ms ease-in forwards;
+.budget-page-modal-overlay.budget-page-modal-closing .budget-page-modal-card {
+    animation: scaleOutModalCard 0.3s ease forwards;
 }
 
-.budget-modal-card h3 {
-    margin: 0 0 25px 0;
-    font-size: 1.5rem;
+.budget-page-modal-card h3 {
+    font-size: 1.6rem;
     font-weight: 900;
     color: var(--black-color);
+    margin: 0;
     text-align: center;
-    letter-spacing: 1px;
 }
 
-.budget-modal-error {
-    width: 100%;
+.budget-page-modal-error {
     color: var(--red-color);
-    font-weight: 900;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.9rem;
     text-align: center;
-    margin-bottom: 15px;
 }
 
-.budget-form-group {
-    width: 100%;
-    margin-bottom: 15px;
-    position: relative;
-}
-
-.budget-form-input {
+/* Form groups structure and specific z-indexes */
+.budget-page-form-group {
     position: relative;
     width: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
-.budget-form-input > input {
+.budget-page-z-index-high {
+    z-index: 12;
+}
+
+.budget-page-z-index-medium {
+    z-index: 11;
+}
+
+/* Inputs with Floating Labels styling */
+.budget-page-form-input {
+    position: relative;
+    width: 100%;
+}
+
+.budget-page-form-input input {
     width: 100%;
     height: 50px;
-    border: solid 3px var(--black-color);
-    border-radius: 5px;
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
-    padding: 5px 15px;
+    padding: 10px 15px;
     font-family: var(--text-font);
+    font-size: 1.05rem;
+    font-weight: 600;
+    border: 3px solid var(--black-color);
     color: var(--black-color);
+    border-radius: 6px;
     background-color: var(--white-color);
-    font-size: 1.1rem;
-    font-weight: 500;
     outline: none;
-    transition: all 0.3s ease;
 }
 
-.budget-form-input > label {
+.budget-page-form-input label {
     position: absolute;
-    top: 50%;
     left: 15px;
+    top: 50%;
     transform: translateY(-50%);
     font-family: var(--text-font);
+    font-size: 1.05rem;
+    font-weight: 700;
     color: var(--black-color);
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    pointer-events: none;
     background-color: var(--white-color);
     padding: 0px 5px;
+    transition: all 0.2s ease;
+    pointer-events: none;
 }
 
-.budget-form-input > input:focus ~ label,
-.budget-form-input > input:not(:placeholder-shown) ~ label {
-    top: 0px;
-    font-size: 0.9rem;
-    font-weight: 900;
-    letter-spacing: 1px;
+.budget-page-form-input input:focus ~ label,
+.budget-page-form-input input:not(:placeholder-shown) ~ label {
+    top: 0;
+    font-size: 0.85rem;
+    color: var(--black-color);
 }
 
-/* BUTTONS */
-.budget-modal-actions {
+/* Transformed inline styles for the delete confirmation description */
+.budget-page-delete-text {
+    color: var(--black-color);
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 500;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+/* Modal actions row via Flexbox only */
+.budget-page-modal-actions {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
     width: 100%;
     margin-top: 15px;
 }
 
-.budget-modal-btn {
-    width: 100%;
-    padding: 10px 0px;
+/* Stable and precise fixed width for buttons to avoid 100% object stretch */
+.budget-page-modal-btn {
+    width: 140px;
+    padding: 12px 0px;
     font-family: var(--text-font);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     color: var(--black-color);
     background-color: var(--white-color);
     border: solid 3px var(--black-color);
-    border-radius: 5px;
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+    border-radius: 6px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
     cursor: pointer;
+    text-align: center;
 }
 
-.budget-modal-btn.primary {
+.budget-page-modal-btn.budget-page-modal-btn-primary {
     background-color: var(--black-color);
     color: var(--white-color);
 }
 
-.budget-modal-btn.delete-confirm-btn {
+.budget-page-modal-btn.budget-page-modal-btn-delete {
     background-color: var(--black-color);
     color: var(--white-color);
     border-color: var(--black-color);
 }
 
-.budget-modal-btn:hover {
+.budget-page-modal-btn:hover {
     filter: brightness(0.7);
 }
 
-
-/* Animations */
+/* Keyframe Animations */
 @keyframes fadeInModalOverlay {
-    from { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
-    to { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); }
+    from { background-color: rgba(0, 0, 0, 0); }
+    to { background-color: rgba(0, 0, 0, 0.5); }
 }
+
 @keyframes fadeOutModalOverlay {
-    from { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); }
-    to { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+    from { background-color: rgba(0, 0, 0, 0.5); }
+    to { background-color: rgba(0, 0, 0, 0); }
 }
-@keyframes slideInUpModal {
-    from { transform: translateY(100vh); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+
+@keyframes scaleInModalCard {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
-@keyframes slideOutUpModal {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(100vh); opacity: 0; }
+
+@keyframes scaleOutModalCard {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(0.8); opacity: 0; }
 }
