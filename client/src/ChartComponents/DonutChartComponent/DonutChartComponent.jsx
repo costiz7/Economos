@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './DonutChartComponent.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 function DonutChartComponent({ 
     data = [], 
@@ -10,6 +11,7 @@ function DonutChartComponent({
     unit = "RON",
     size = "250px"
 }) {
+    const { formatMoney } = useLanguage();
     const [focusedIndex, setFocusedIndex] = useState(null);
     const [isAnimated, setIsAnimated] = useState(false);
 
@@ -122,8 +124,8 @@ function DonutChartComponent({
                         className="donut-value-svg"
                     >
                         {focusedIndex !== null 
-                            ? parseFloat(data[focusedIndex]?.value || 0).toFixed(2) 
-                            : parseFloat(total).toFixed(2)} {unit}
+                            ? formatMoney(data[focusedIndex]?.value) 
+                            : formatMoney(total)} {unit}
                     </text>
                 </g>
             </svg>

@@ -97,7 +97,7 @@ const fetchGaugeData = async (token, queryParamsStr) => {
 // --- Main Component ---
 
 function StatisticsContent() {
-    const { t } = useLanguage();
+    const { t, formatMoney } = useLanguage();
     const { setIsLoading } = useLoading();
 
     // User data state from local storage
@@ -298,19 +298,19 @@ function StatisticsContent() {
             <div className="statistics-totals-row">
                 <div className="stat-mini-card income-card">
                     <span className="stat-card-title">{t('statistics.incomeTitle') || 'Income'}</span>
-                    <span className="stat-card-value" style={{ color:"var(--green-color)" }}>+{parseFloat(statsData.totals.income).toFixed(2)} {userCurrency}</span>
+                    <span className="stat-card-value" style={{ color:"var(--green-color)" }}>+{formatMoney(statsData.totals.income)} {userCurrency}</span>
                 </div>
                 <div className="stat-mini-card expense-card">
                     <span className="stat-card-title">{t('statistics.expenseTitle') || 'Expenses'}</span>
-                    <span className="stat-card-value" style={{ color:"var(--red-color)" }}>-{parseFloat(statsData.totals.expense).toFixed(2)} {userCurrency}</span>
+                    <span className="stat-card-value" style={{ color:"var(--red-color)" }}>-{formatMoney(statsData.totals.expense)} {userCurrency}</span>
                 </div>
                 <div className="stat-mini-card balance-card">
                     <span className="stat-card-title">{t('statistics.balanceTitle') || 'Total Balance'}</span>
-                    <span className="stat-card-value">{parseFloat(statsData.totals.balance).toFixed(2)} {userCurrency}</span>
+                    <span className="stat-card-value">{formatMoney(statsData.totals.balance)} {userCurrency}</span>
                 </div>
                 <div className="stat-mini-card average-card">
                     <span className="stat-card-title">{t('statistics.dailyAverage') || 'Daily Average'}</span>
-                    <span className="stat-card-value" style={{ color:"var(--orange-color)" }}>{parseFloat(statsData.dailyAverage).toFixed(2)} {userCurrency}</span>
+                    <span className="stat-card-value" style={{ color:"var(--orange-color)" }}>{formatMoney(statsData.dailyAverage)} {userCurrency}</span>
                 </div>
             </div>
 

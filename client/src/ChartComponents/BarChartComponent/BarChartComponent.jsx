@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './BarChartComponent.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 function BarChartComponent({ 
     data = [], 
@@ -10,6 +11,7 @@ function BarChartComponent({
     barThickness = "50px", 
     unit = "RON" 
 }) {
+    const { formatMoney } = useLanguage();
     const [focusedIndex, setFocusedIndex] = useState(null);
     const [isAnimated, setIsAnimated] = useState(false);
 
@@ -54,7 +56,7 @@ function BarChartComponent({
                 const barColor = colorArray[index % colorArray.length];
 
                 // Format for display
-                const displayValue = parseFloat(item.value || 0).toFixed(2);
+                const displayValue = formatMoney(item.value);
 
                 return (
                     <div 

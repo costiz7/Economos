@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useId } from 'react';
 import './LineChartComponent.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 function LineChartComponent({ 
     data = [], 
@@ -12,6 +13,7 @@ function LineChartComponent({
     height = "250px", 
     unit = "RON" 
 }) {
+    const { formatMoney } = useLanguage();
     const [hoveredPoint, setHoveredPoint] = useState(null);
     const [isAnimated, setIsAnimated] = useState(false);
     
@@ -100,7 +102,7 @@ function LineChartComponent({
 
                 {points.map((p, i) => {
                     const isHovered = hoveredPoint === i;
-                    const displayValue = parseFloat(p.numericValue).toFixed(2);
+                    const displayValue = formatMoney(p.numericValue);
 
                     return (
                         <g 

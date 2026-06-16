@@ -34,8 +34,19 @@ export function LanguageProvider({ children }) {
         return text;
     };
 
+    const formatMoney = (amount) => {
+        const numericAmount = parseFloat(amount) || 0; 
+        
+        const locale = currentLang === 'ro' ? 'ro-RO' : 'en-US';
+        
+        return new Intl.NumberFormat(locale, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(numericAmount);
+    };
+
     return (
-        <LanguageContext value={{ currentLang, setCurrentLang, t }}>
+        <LanguageContext value={{ currentLang, setCurrentLang, t, formatMoney }}>
             {children}
         </LanguageContext>
     );

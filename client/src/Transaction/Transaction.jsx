@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 function Transaction({ transaction, user }) {
     const [ isExpanded, setIsExpanded ] = useState(false);
-    const { t } = useLanguage();
+    const { t, formatMoney } = useLanguage();
 
     function toggleExpansion() {
         setIsExpanded(!isExpanded);
@@ -25,7 +25,7 @@ function Transaction({ transaction, user }) {
                     </div>
                     <div className="header-right-side">
                         <div className="header-transaction-amount" style={{ color: amountColor, fontWeight: 'bold' }}>
-                            {amountSign} {transaction.amount} {user ? user.currency : "RON"}
+                            {amountSign} {formatMoney(transaction.amount)} {user ? user.currency : "RON"}
                         </div>
                     </div>
                 </div>
@@ -37,7 +37,7 @@ function Transaction({ transaction, user }) {
 
                             <span className="body-detail-label">{t('transaction.amount')}</span>
                             <span className="body-detail-value" style={{ color: amountColor, fontWeight: 'bold' }}>
-                                {amountSign} {transaction.amount} {user ? user.currency : "RON"}
+                                {amountSign} {formatMoney(transaction.amount)} {user ? user.currency : "RON"}
                             </span>
 
                             <span className="body-detail-label">{t('transaction.date')}</span>

@@ -89,7 +89,7 @@ const fetchGaugeData = async (token) => {
 };
 
 function DashboardContent() {
-    const { t } = useLanguage();
+    const { t, formatMoney } = useLanguage();
     const { setIsLoading } = useLoading();
     
     const [user] = useState(() => {
@@ -161,7 +161,7 @@ function DashboardContent() {
                     
                     <div className="dashboard-balance-content standalone">
                         <span className="dashboard-balance-amount">
-                            {parseFloat(dashboardData.balance.availableBalance || 0).toFixed(2)} {user?.currency || 'RON'}
+                            {formatMoney(dashboardData.balance.availableBalance)} {user?.currency || 'RON'}
                         </span>
                     </div>
                 </div>

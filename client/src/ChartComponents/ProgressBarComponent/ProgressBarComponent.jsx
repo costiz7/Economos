@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ProgressBarComponent.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 function ProgressBarComponent({ 
     currentValue = 0, 
@@ -10,6 +11,7 @@ function ProgressBarComponent({
     showLabels = true,
     unit = "RON" // Standardized prop name
 }) {
+    const { formatMoney } = useLanguage();
     const [animatedWidth, setAnimatedWidth] = useState(0);
 
     // 1. Convert props to numbers safely
@@ -21,8 +23,8 @@ function ProgressBarComponent({
     const percentage = Math.min(100, Math.max(0, (numericCurrent / safeMaxForMath) * 100));
 
     // 3. Format values for clean UI display
-    const displayCurrent = parseFloat(numericCurrent).toFixed(2);
-    const displayMax = parseFloat(numericMax).toFixed(2);
+    const displayCurrent = formatMoney(numericCurrent);
+    const displayMax = formatMoney(numericMax);
 
     // 4. Initial animation trigger & data readiness optimization
     useEffect(() => {
