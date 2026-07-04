@@ -58,11 +58,11 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: fadeInModalOverlay 0.3s ease forwards;
+    animation: fadeInModalOverlay 400ms ease-out forwards;
 }
 
 .budget-page-modal-overlay.budget-page-modal-closing {
-    animation: fadeOutModalOverlay 0.3s ease forwards;
+    animation: fadeOutModalOverlay 400ms ease-in forwards;
 }
 
 .budget-page-modal-card {
@@ -76,11 +76,11 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    animation: scaleInModalCard 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: slideInUpModal 400ms ease-out forwards;
 }
 
 .budget-page-modal-overlay.budget-page-modal-closing .budget-page-modal-card {
-    animation: scaleOutModalCard 0.3s ease forwards;
+    animation: slideOutUpModal 400ms ease-in forwards;
 }
 
 .budget-page-modal-card h3 {
@@ -220,12 +220,12 @@
     to { background-color: rgba(0, 0, 0, 0); }
 }
 
-@keyframes scaleInModalCard {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+@keyframes slideInUpModal {
+    from { transform: translateY(100vh); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes scaleOutModalCard {
-    from { transform: scale(1); opacity: 1; }
-    to { transform: scale(0.8); opacity: 0; }
+@keyframes slideOutUpModal {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100vh); opacity: 0; }
 }

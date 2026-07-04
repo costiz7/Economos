@@ -81,6 +81,8 @@
     "refunds": "Refunds"
   },
   "transactions": {
+    "pageTitle": "Transactions",
+    "addBtn": "Add Transaction",
     "filtersTitle": "Filters",
     "typeLabel": "Type",
     "categoryLabel": "Category",

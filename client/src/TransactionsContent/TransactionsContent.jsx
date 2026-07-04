@@ -202,6 +202,12 @@ function TransactionsContent() {
 
     return (
         <div className="transactions-content-wrapper">
+            <div className="transactions-header">
+                <h2>{t('transactions.pageTitle')}</h2>
+                <button className="transactions-header-btn" onClick={() => openModal('ADD')}>
+                    {t('transactions.addBtn')}
+                </button>
+            </div>
             
             {/* Filters Section */}
             <div className="transactions-filter-card">

@@ -81,6 +81,8 @@
     "refunds": "Rambursări"
   },
   "transactions": {
+    "pageTitle": "Tranzacții",
+    "addBtn": "Adaugă Tranzacție",
     "filtersTitle": "Filtre",
     "typeLabel": "Tip",
     "categoryLabel": "Categorie",
