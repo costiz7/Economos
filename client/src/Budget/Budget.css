@@ -112,7 +112,7 @@
     filter: brightness(0.8);
 }
 
-.delete-btn {
+.budget-action-btn.delete-btn {
     color: var(--white-color);
     background-color: var(--black-color);
 }

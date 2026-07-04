@@ -11,24 +11,17 @@ function Saving({ goal, user, onOpenAddFunds, onOpenWithdraw, onOpenDelete }) {
     function toggleExpansion() {
         setIsExpanded(!isExpanded);
     }
-
-    // Variabilele care vin din controller-ul tău de economii
     const targetAmount = parseFloat(goal.targetAmount) || 0;
     const currentAmount = parseFloat(goal.currentAmount) || 0;
-    
-    // Verificăm dacă a atins sau depășit țelul
+
     const isCompleted = currentAmount >= targetAmount;
 
-    // Bara va fi verde progresiv, și putem să o facem albastră/mov când e gata (sau tot verde, cum preferi)
     const progressBarColor = isCompleted ? 'var(--blue-color)' : 'var(--green-color)';
 
-    // Formatarea datei limită (deadline)
     const deadlineDate = new Date(goal.deadline).toLocaleDateString();
 
     return (
         <div className="saving-card-wrapper">
-            
-            {/* Header-ul cardului - click pentru expandare */}
             <div className="saving-header" onClick={toggleExpansion}>
                 <div className="header-top-row">
                     <div className="header-left-side">
@@ -48,14 +41,11 @@ function Saving({ goal, user, onOpenAddFunds, onOpenWithdraw, onOpenDelete }) {
                     />
                 </div>
             </div>
-
-            {/* Corpul Extins al cardului - ascuns inițial */}
             <div className={`saving-body-wrapper ${isExpanded ? 'expanded' : ''}`}>
                 <div className="saving-body">
                     <div className="body-saving-details">
-                        
                         <span className="body-detail-label">{t('savings.deadline') || 'Deadline'}</span>
-                        <span className="body-detail-value" style={{ fontWeight: 'bold' }}>
+                        <span className="body-detail-value">
                             {deadlineDate}
                         </span>
 
@@ -64,16 +54,15 @@ function Saving({ goal, user, onOpenAddFunds, onOpenWithdraw, onOpenDelete }) {
                             {isCompleted ? (t('savings.status_completed') || 'COMPLETED') : (t('savings.status_in_progress') || 'IN PROGRESS')}
                         </span>
 
-                        {/* Butoanele de Acțiune - specifice unei pușculițe */}
                         <div className="saving-actions-row">
                             <button className="saving-action-btn" onClick={(e) => { e.stopPropagation(); onOpenAddFunds(goal); }}>
-                                {t('savings.addFundsBtn') || '+ Add'}
+                                {t('savings.addFundsBtn')}
                             </button>
                             <button className="saving-action-btn" onClick={(e) => { e.stopPropagation(); onOpenWithdraw(goal); }}>
-                                {t('savings.withdrawBtn') || '- Withdraw'}
+                                {t('savings.withdrawBtn')}
                             </button>
                             <button className="saving-action-btn delete-btn" onClick={(e) => { e.stopPropagation(); onOpenDelete(goal); }}>
-                                {t('savings.deleteBtn') || 'Delete'}
+                                {t('savings.deleteBtn')}
                             </button>
                         </div>
                     </div>    

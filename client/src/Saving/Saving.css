@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     background-color: var(--white-color);
-    border: solid 3px var(--black-color);
+    border: solid 4px var(--black-color);
     border-radius: 10px;
     box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -94,7 +94,6 @@
 }
 
 .saving-action-btn {
-    flex: 1;
     padding: 8px 10px;
     font-family: var(--text-font);
     font-weight: 900;
@@ -113,6 +112,7 @@
     filter: brightness(0.8);
 }
 
-.delete-btn {
-    color: var(--red-color);
+.saving-action-btn.delete-btn {
+    color: var(--white-color);
+    background-color: var(--black-color);
 }

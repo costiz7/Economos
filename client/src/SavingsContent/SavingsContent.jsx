@@ -216,9 +216,9 @@ function SavingsContent() {
     return (
         <div className="savings-content-wrapper">
             <div className="savings-header">
-                <h2>{t('savings.pageTitle') || 'Savings Goals'}</h2>
+                <h2>{t('savings.pageTitle')}</h2>
                 <button className="savings-header-btn" onClick={() => openModal('ADD_GOAL')}>
-                    {t('savings.addBtn') || '+ New Goal'}
+                    {t('savings.addBtn')}
                 </button>
             </div>
 
@@ -234,13 +234,10 @@ function SavingsContent() {
                     />
                 ))}
             </div>
-
-            {/* MODALS RENDERER ENGINE */}
             {activeModal && (
                 <div className={`savings-modal-overlay ${isClosing ? 'closing' : ''}`}>
                     <div className="savings-modal-card">
                         
-                        {/* 1. ADD NEW SAVINGS GOAL POD */}
                         {activeModal === 'ADD_GOAL' && (
                             <>
                                 <h3>{t('savings.modalAddTitle') || 'Create New Goal'}</h3>
@@ -288,10 +285,9 @@ function SavingsContent() {
                             </>
                         )}
 
-                        {/* 2. DEPOSIT / ADD FUNDS MODAL */}
                         {activeModal === 'ADD_FUNDS' && (
                             <>
-                                <h3>{t('savings.modalDepositTitle') || 'Deposit Funds'}</h3>
+                                <h3>{t('savings.modalDepositTitle')}</h3>
                                 <p className="modal-subtitle-context">{selectedGoal?.name}</p>
                                 
                                 {modalError && <div className="savings-modal-error">{modalError}</div>}
@@ -304,21 +300,20 @@ function SavingsContent() {
                                                 value={transactionAmount}
                                                 onChange={(e) => setTransactionAmount(e.target.value)}
                                                 placeholder=' ' />
-                                        <label htmlFor="transactionAmount">{t('savings.depositAmountLabel') || 'Amount to Deposit'}</label>
+                                        <label htmlFor="transactionAmount">{t('savings.depositAmountLabel')}</label>
                                     </div>
                                 </div>
 
                                 <div className="savings-modal-actions">
                                     <button className="savings-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
-                                    <button className="savings-modal-btn primary" onClick={handleAddFunds}>{t('savings.confirmDepositBtn') || 'Deposit'}</button>
+                                    <button className="savings-modal-btn primary" onClick={handleAddFunds}>{t('savings.confirmDepositBtn')}</button>
                                 </div>
                             </>
                         )}
 
-                        {/* 3. EMERGENCY WITHDRAWAL MODAL */}
                         {activeModal === 'WITHDRAW' && (
                             <>
-                                <h3>{t('savings.modalWithdrawTitle') || 'Withdraw Funds'}</h3>
+                                <h3>{t('savings.modalWithdrawTitle')}</h3>
                                 <p className="modal-subtitle-context">{selectedGoal?.name}</p>
                                 
                                 {modalError && <div className="savings-modal-error">{modalError}</div>}
@@ -331,23 +326,21 @@ function SavingsContent() {
                                                 value={transactionAmount}
                                                 onChange={(e) => setTransactionAmount(e.target.value)}
                                                 placeholder=' ' />
-                                        <label htmlFor="transactionAmount">{t('savings.withdrawAmountLabel') || 'Amount to Withdraw'}</label>
+                                        <label htmlFor="transactionAmount">{t('savings.withdrawAmountLabel')}</label>
                                     </div>
                                 </div>
 
                                 <div className="savings-modal-actions">
                                     <button className="savings-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
-                                    <button className="savings-modal-btn primary" onClick={handleWithdrawFunds}>{t('savings.confirmWithdrawBtn') || 'Withdraw'}</button>
+                                    <button className="savings-modal-btn primary" onClick={handleWithdrawFunds}>{t('savings.confirmWithdrawBtn')}</button>
                                 </div>
                             </>
                         )}
-
-                        {/* 4. TERMINATE / DELETE SAVINGS GOAL */}
                         {activeModal === 'DELETE_GOAL' && (
                             <>
-                                <h3>{t('savings.modalDeleteTitle') || 'Delete Goal'}</h3>
+                                <h3>{t('savings.modalDeleteTitle')}</h3>
                                 <p style={{ color: 'var(--black-color)', textAlign: 'center', marginBottom: '25px', fontWeight: '500' }}>
-                                    {t('savings.modalDeleteDesc') || 'Are you sure you want to delete this savings goal? Stored progress will return to your general pool.'}
+                                    {t('savings.modalDeleteDesc')}
                                 </p>
                                 <div className="savings-modal-actions">
                                     <button className="savings-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
