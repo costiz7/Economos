@@ -96,7 +96,13 @@
     "listTitle": "Tranzacții",
     "noData": "Nu au fost găsite tranzacții.",
     "prevBtn": "Înapoi",
-    "nextBtn": "Înainte"
+    "nextBtn": "Înainte",
+    "selectCategory": "Selectează o categorie",
+    "addModalTitle": "Adaugă Tranzacție Nouă",
+    "titleLabel": "Titlu / Comerciant",
+    "amountLabel": "Sumă",
+    "dateLabel": "Data",
+    "descLabel": "Descriere (Opțional)"
   },
   "statistics": {
     "filtersTitle": "Filtre",
@@ -120,7 +126,7 @@
   },
   "budgets": {
     "pageTitle": "Bugetele Mele",
-    "addBtn": "+ Buget Nou",
+    "addBtn": "Adaugă Buget",
     "general": "General",
     "period": {
       "weekly": "Săptămânal",
@@ -167,7 +173,7 @@
   },
   "savings": {
     "pageTitle": "Țeluri de Economisire",
-    "addBtn": "+ Țel Nou",
+    "addBtn": "Adaugă Țel",
     "deadline": "Dată Limită",
     "status": "Status",
     "status_completed": "Realizat",

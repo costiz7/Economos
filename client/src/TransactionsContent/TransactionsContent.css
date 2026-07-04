@@ -6,6 +6,39 @@
     gap: 20px;
 }
 
+.transactions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.transactions-header h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--black-color);
+    letter-spacing: 1px;
+}
+
+.transactions-header-btn {
+    padding: 10px 20px;
+    font-family: var(--text-font);
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    background-color: var(--black-color);
+    color: var(--white-color);
+    border: solid 3px var(--black-color);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.transactions-header-btn:hover {
+    filter: brightness(0.7);
+}
+
 .transactions-filter-card,
 .transactions-list-card {
     position: relative;
@@ -156,6 +189,237 @@
     user-select: none;
 }
 
+/* =========================================================
+   STILURI PENTRU MODAL (ADĂUGARE TRANZACȚIE)
+========================================================= */
+
+.transactions-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* Schimbat din 100vw pentru a nu include scrollbar-ul OS-ului */
+    height: 100%; /* Schimbat din 100vh */
+    box-sizing: border-box; /* OBLIGATORIU: Previne lățirea din cauza padding-ului de mai jos */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    animation: fadeInModalOverlay 400ms ease-out forwards;
+}
+
+.transactions-modal-overlay.closing {
+    animation: fadeOutModalOverlay 400ms ease-in forwards;
+}
+
+.transactions-modal-card {
+    background-color: var(--white-color);
+    border: 4px solid var(--black-color);
+    border-radius: 20px;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 100%; /* Îi dă voie să crească DOAR până atinge padding-ul de protecție */
+    overflow-y: auto; /* Dacă e ecranul mic sau apar erori, dai scroll curat DOAR pe card */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideInUpModal 400ms ease-out forwards;
+    /* margin: auto; A FOST ȘTERS DEFINITIV! */
+}
+
+.transactions-modal-overlay.closing .transactions-modal-card {
+    animation: slideOutUpModal 400ms ease-in forwards;
+}
+
+.transactions-modal-card h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--black-color);
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.transactions-modal-error {
+    width: 100%;
+    color: var(--red-color);
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* =========================================================
+   RÂNDUL PENTRU DROPDOWN-URI (FLEXBOX) ȘI ETICHETE MODAL
+========================================================= */
+
+.transactions-dropdowns-row {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 13;
+}
+
+.transactions-dropdowns-row .transactions-form-group {
+    flex: 1; 
+}
+
+.modal-dropdown-label {
+    display: block;
+    font-family: var(--text-font);
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--black-color);
+    margin-bottom: 8px;
+    margin-left: 5px;
+    text-align: left;
+}
+
+/* Structura Input-urilor cu Label Flotant */
+.transactions-form-group {
+    width: 100%;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.transactions-form-input {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.transactions-form-input > input {
+    width: 100%;
+    height: 50px;
+    border: solid 3px var(--black-color);
+    border-radius: 5px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
+    padding: 5px 15px;
+    font-family: var(--text-font);
+    color: var(--black-color);
+    background-color: var(--white-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.transactions-form-input > input:focus {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
+}
+
+.transactions-form-input > label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-family: var(--text-font);
+    color: var(--black-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background-color: var(--white-color);
+    padding: 0px 5px;
+}
+
+.transactions-form-input > input:focus ~ label,
+.transactions-form-input > input:not(:placeholder-shown) ~ label {
+    top: 0px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+/* Pentru input-ul de Date, ținem label-ul mereu sus */
+.transactions-form-input.label-always-floating > label {
+    top: 0px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+/* Butoane Acțiune Modal */
+.transactions-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.transactions-modal-btn {
+    width: 100%;
+    padding: 10px 0px;
+    font-family: var(--text-font);
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--black-color);
+    background-color: var(--white-color);
+    border: solid 3px var(--black-color);
+    border-radius: 5px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.transactions-modal-btn.primary {
+    background-color: var(--black-color);
+    color: var(--white-color);
+}
+
+.transactions-modal-btn:hover {
+    filter: brightness(0.7);
+}
+
+/* Clase pentru înlocuirea stilurilor inline */
+.transactions-z-index-high {
+    z-index: 13;
+}
+
+.transactions-z-index-medium {
+    z-index: 12;
+}
+
+.no-margin-bottom {
+    margin-bottom: 0 !important;
+}
+
+/* =========================================================
+   ANIMAȚII ȘI MEDIA QUERIES
+========================================================= */
+
+@keyframes fadeInModalOverlay {
+    from { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+    to { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); }
+}
+
+@keyframes fadeOutModalOverlay {
+    from { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); }
+    to { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+}
+
+@keyframes slideInUpModal {
+    from { transform: translateY(100vh); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideOutUpModal {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100vh); opacity: 0; }
+}
+
 @media (max-width: 750px) {
     .pagination-container {
         gap: 10px;
@@ -172,7 +436,6 @@
         font-size: 0.9rem;
         letter-spacing: 2px;
     }
-    
 }
 
 @media (max-width: 500px) {
@@ -220,7 +483,6 @@
     .transactions-card-header > h2 {
         font-size: 1.2rem;
         letter-spacing: 1px;
-        
     }
 
     .transactions-filters-container {
@@ -242,7 +504,14 @@
     .apply-filters-btn {
         height: 45px;
         padding: 0 20px;
-        font-size: 01rem;
+        font-size: 1rem;
         margin-top: 10px;
     }   
+}
+
+@media (max-width: 450px) {
+    .transactions-dropdowns-row {
+        flex-direction: column;
+        gap: 15px;
+    }
 }

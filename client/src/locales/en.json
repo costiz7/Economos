@@ -96,7 +96,13 @@
     "listTitle": "Transactions",
     "noData": "No transactions found.",
     "prevBtn": "Previous",
-    "nextBtn": "Next"
+    "nextBtn": "Next",
+    "selectCategory": "Select a category",
+    "addModalTitle": "Add New Transaction",
+    "titleLabel": "Title / Merchant",
+    "amountLabel": "Amount",
+    "dateLabel": "Date",
+    "descLabel": "Description (Optional)"
   },
   "statistics": {
     "filtersTitle": "Filters",
@@ -132,7 +138,7 @@
   },
   "budgets": {
     "pageTitle": "My Budgets",
-    "addBtn": "+ New Budget",
+    "addBtn": "Add Budget",
     "general": "General",
     "period": {
       "weekly": "Weekly",
@@ -167,7 +173,7 @@
   },
   "savings": {
     "pageTitle": "Savings Goals",
-    "addBtn": "+ New Goal",
+    "addBtn": "Add Goal",
     "deadline": "Deadline",
     "status": "Status",
     "status_completed": "Completed",

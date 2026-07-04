@@ -9,41 +9,43 @@ function TransactionsContent() {
     const { t } = useLanguage();
     const { setIsLoading } = useLoading();
 
-    // Retrieve and parse the user object from local storage
+    // Stocarea datelor globale
     const [user, setUser] = useState(() => {
         const storedUser = localStorage.getItem("user");
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    // State for storing the list of transactions and available categories
     const [transactions, setTransactions] = useState([]);
     const [categories, setCategories] = useState([]);
     
-    // State for managing pagination data returned from the API
+    // Paginare și Filtrare
     const [pagination, setPagination] = useState({
-        totalItems: 0,
-        totalPages: 1,
-        currentPage: 1,
-        itemsPerPage: 20
+        totalItems: 0, totalPages: 1, currentPage: 1, itemsPerPage: 20
     });
 
-    // Temporary filters selected by the user in the UI (not yet applied)
     const [selectedFilters, setSelectedFilters] = useState({
-        categoryId: '',
-        type: '',
-        month: '',
-        year: ''
+        categoryId: '', type: '', month: '', year: ''
     });
 
-    // Filters that are actually sent to the API when "Apply Filters" is clicked
     const [appliedFilters, setAppliedFilters] = useState({
-        categoryId: '',
-        type: '',
-        month: '',
-        year: ''
+        categoryId: '', type: '', month: '', year: ''
     });
 
-    // Fetch categories on component mount to populate the Category dropdown
+    // ==========================================
+    // STĂRI PENTRU MODALUL DE ADĂUGARE MANUALĂ
+    // ==========================================
+    const [activeModal, setActiveModal] = useState(null); 
+    const [isClosing, setIsClosing] = useState(false);
+    const [modalError, setModalError] = useState("");
+
+    // Câmpurile formularului
+    const [modalType, setModalType] = useState("expense");
+    const [modalCategory, setModalCategory] = useState("");
+    const [title, setTitle] = useState("");
+    const [amount, setAmount] = useState("");
+    const [date, setDate] = useState("");
+    const [description, setDescription] = useState("");
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -63,13 +65,11 @@ function TransactionsContent() {
         fetchCategories();
     }, []);
 
-    // Main function to fetch transactions based on pagination and applied filters
     const fetchTransactions = async (page = 1, filters = appliedFilters) => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
             
-            // Build the query string dynamically based on active filters
             let queryUrl = `?page=${page}&limit=20`;
             if (filters.categoryId) queryUrl += `&categoryId=${filters.categoryId}`;
             if (filters.type) queryUrl += `&type=${filters.type}`;
@@ -83,7 +83,6 @@ function TransactionsContent() {
             if (response.ok) {
                 const data = await response.json();
                 
-                // Flatten the nested Category object from Sequelize so the Transaction component can read it easily
                 const formattedTransactions = data.transactions.map(obj => ({
                     id: obj.id,
                     amount: obj.amount,
@@ -96,7 +95,6 @@ function TransactionsContent() {
                     type: obj.Category?.type
                 }));
 
-                // Update state with the fetched data
                 setTransactions(formattedTransactions);
                 setPagination(data.pagination);
             }
@@ -107,67 +105,133 @@ function TransactionsContent() {
         }
     };
 
-    // Initial fetch when the component mounts
     useEffect(() => {
         fetchTransactions(1, appliedFilters);
     }, []);
 
-    // Handler for the "Apply Filters" button
     const handleApplyFilters = () => {
         setAppliedFilters(selectedFilters);
-        // Always reset to the first page when applying new filters
         fetchTransactions(1, selectedFilters);
     };
 
-    // Handler for pagination buttons
     const handlePageChange = (newPage) => {
-        // Ensure the new page is within valid bounds
         if (newPage >= 1 && newPage <= pagination.totalPages) {
             fetchTransactions(newPage, appliedFilters);
         }
     };
 
-    // Custom handler for Year selection to handle Month validation
     const handleYearSelect = (yearId) => {
         setSelectedFilters(prev => {
             const newState = { ...prev, year: yearId };
-            // If the user clears the year, we must automatically clear the month as well
-            if (!yearId) {
-                newState.month = '';
-            }
+            if (!yearId) newState.month = '';
             return newState;
         });
     };
 
-    // === Data Preparation for Dropdowns ===
+    // ==========================================
+    // LOGICA PENTRU MODAL ȘI TRANZACȚIE MANUALĂ
+    // ==========================================
+    const openModal = () => {
+        setIsClosing(false);
+        setModalError("");
+        
+        setTitle("");
+        setAmount("");
+        setDescription("");
+        setModalType("expense");
+        setModalCategory("");
+        setDate(new Date().toISOString().split('T')[0]); 
+        
+        setActiveModal('ADD');
+    };
 
+    const closeModal = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            setActiveModal(null);
+            setIsClosing(false);
+            setModalError("");
+        }, 400); 
+    };
+
+    const handleAddTransaction = async () => {
+        setModalError("");
+
+        if (!title.trim()) return setModalError(t('errors.MISSING_TITLE'));
+        if (!modalCategory) return setModalError(t('errors.MISSING_CATEGORY'));
+        
+        const parsedAmount = parseFloat(String(amount).replace(',', '.'));
+        if (!parsedAmount || parsedAmount <= 0) return setModalError(t('errors.INVALID_AMOUNT'));
+
+        setIsLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const payload = {
+                title: title.trim(),
+                amount: parsedAmount,
+                categoryId: modalCategory,
+                date: date || new Date().toISOString().split('T')[0],
+                description: description.trim() || null
+            };
+
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'token': token },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                closeModal();
+                fetchTransactions(1, appliedFilters);
+            } else {
+                setModalError(t(`errors.${data.errorCode}`));
+            }
+        } catch (error) {
+            setModalError(t('errors.SERVER_ERROR'));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // ==========================================
+    // DATE PENTRU DROPDOWN-URI
+    // ==========================================
     const typeData = [
-        { id: '', name: t('transactions.all') || 'All' },
-        { id: 'income', name: t('transactions.income') || 'Income' },
-        { id: 'expense', name: t('transactions.expense') || 'Expense' }
+        { id: '', name: t('transactions.all') },
+        { id: 'income', name: t('transactions.income') },
+        { id: 'expense', name: t('transactions.expense') }
     ];
 
     const categoryData = [
-        { id: '', name: t('transactions.all') || 'All' },
+        { id: '', name: t('transactions.all') },
         ...categories.map(cat => ({
             id: cat.id, 
             name: t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name
         }))
     ];
 
+    const filteredModalCategories = categories.filter(c => c.type === modalType);
+    const modalCategoryData = [
+        { id: '', name: t('transactions.selectCategory') },
+        ...filteredModalCategories.map(cat => ({
+            id: cat.id,
+            name: t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name
+        }))
+    ];
+
     const currentYear = new Date().getFullYear();
     const yearData = [
-        { id: '', name: t('transactions.all') || 'All' },
+        { id: '', name: t('transactions.all') },
         ...Array.from({ length: 5 }, (_, i) => ({ id: currentYear - i, name: `${currentYear - i}` }))
     ];
 
-    // Standard month generation. The disabling logic is handled on the Dropdown component level now.
     const monthData = [
-        { id: '', name: t('transactions.all') || 'All' },
+        { id: '', name: t('transactions.all') },
         ...Array.from({ length: 12 }, (_, i) => ({ id: i + 1, name: `${i + 1}` }))
     ];
 
-    // === Pagination Logic ===
     const generatePaginationNumbers = () => {
         const { currentPage, totalPages } = pagination;
         const current = Number(currentPage);
@@ -204,73 +268,71 @@ function TransactionsContent() {
         <div className="transactions-content-wrapper">
             <div className="transactions-header">
                 <h2>{t('transactions.pageTitle')}</h2>
-                <button className="transactions-header-btn" onClick={() => openModal('ADD')}>
+                <button className="transactions-header-btn" onClick={openModal}>
                     {t('transactions.addBtn')}
                 </button>
             </div>
             
-            {/* Filters Section */}
             <div className="transactions-filter-card">
                 <div className="transactions-card-header">
-                    <h2>{t('transactions.filtersTitle') || 'Filters'}</h2>
+                    <h2>{t('transactions.filtersTitle')}</h2>
                 </div>
                 
                 <div className="transactions-filters-container">
                     <div className="filter-item">
-                        <label>{t('transactions.typeLabel') || 'Type'}</label>
+                        <label>{t('transactions.typeLabel')}</label>
                         <Dropdown 
                             dataArr={typeData} 
                             width="100%" 
-                            displayLabel={t('transactions.all') || 'All'} 
+                            displayLabel={t('transactions.all')} 
                             onSelect={(id) => setSelectedFilters({...selectedFilters, type: id})}
                             labelKey="name"
                         />
                     </div>
                     
                     <div className="filter-item">
-                        <label>{t('transactions.categoryLabel') || 'Category'}</label>
+                        <label>{t('transactions.categoryLabel')}</label>
                         <Dropdown 
                             dataArr={categoryData} 
                             width="100%" 
-                            displayLabel={t('transactions.all') || 'All'} 
+                            displayLabel={t('transactions.all')} 
                             onSelect={(id) => setSelectedFilters({...selectedFilters, categoryId: id})}
                             labelKey="name"
                         />
                     </div>
 
                     <div className="filter-item">
-                        <label>{t('transactions.yearLabel') || 'Year'}</label>
+                        <label>{t('transactions.yearLabel')}</label>
                         <Dropdown 
                             dataArr={yearData} 
                             width="100%" 
-                            displayLabel={t('transactions.all') || 'All'} 
+                            displayLabel={t('transactions.all')} 
                             onSelect={handleYearSelect} 
                             labelKey="name"
                         />
                     </div>
 
                     <div className="filter-item">
-                        <label>{t('transactions.monthLabel') || 'Month'}</label>
+                        <label>{t('transactions.monthLabel')}</label>
                         <Dropdown 
                             dataArr={monthData} 
                             width="100%" 
-                            displayLabel={t('transactions.all') || 'All'} 
+                            displayLabel={t('transactions.all')} 
                             onSelect={(id) => setSelectedFilters({...selectedFilters, month: id})}
                             labelKey="name"
-                            disabled={!selectedFilters.year} // Disables the dropdown if no year is selected
+                            disabled={!selectedFilters.year} 
                         />
                     </div>
 
                     <button className="apply-filters-btn" onClick={handleApplyFilters}>
-                        {t('transactions.applyBtn') || 'Apply Filters'}
+                        {t('transactions.applyBtn')}
                     </button>
                 </div>
             </div>
 
-            {/* Transactions List Section */}
             <div className="transactions-list-card">
                 <div className="transactions-card-header">
-                    <h2>{t('transactions.listTitle') || 'Transactions'}</h2>
+                    <h2>{t('transactions.listTitle')}</h2>
                 </div>
                 
                 <div className="transactions-list">
@@ -284,12 +346,11 @@ function TransactionsContent() {
                         ))
                     ) : (
                         <p className="no-transactions-message">
-                            {t('transactions.noData') || 'No transactions found.'}
+                            {t('transactions.noData')}
                         </p>
                     )}
                 </div>
 
-                {/* Pagination Controls */}
                 {pagination.totalPages > 1 && (
                     <div className="pagination-container">
                         <button 
@@ -297,7 +358,7 @@ function TransactionsContent() {
                             disabled={pagination.currentPage === 1}
                             onClick={() => handlePageChange(pagination.currentPage - 1)}
                         >
-                            {t('transactions.prevBtn') || 'Previous'}
+                            {t('transactions.prevBtn')}
                         </button>
 
                         {generatePaginationNumbers().map((pageNumber, index) => {
@@ -320,12 +381,100 @@ function TransactionsContent() {
                             disabled={pagination.currentPage === pagination.totalPages}
                             onClick={() => handlePageChange(pagination.currentPage + 1)}
                         >
-                            {t('transactions.nextBtn') || 'Next'}
+                            {t('transactions.nextBtn')}
                         </button>
                     </div>
                 )}
             </div>
 
+            {activeModal === 'ADD' && (
+                <div className={`transactions-modal-overlay ${isClosing ? 'closing' : ''}`}>
+                    <div className="transactions-modal-card">
+                        <h3>{t('transactions.addModalTitle')}</h3>
+                        
+                        {modalError && <div className="transactions-modal-error">{modalError}</div>}
+
+                        <div className="transactions-dropdowns-row">
+                            <div className="transactions-form-group transactions-z-index-high no-margin-bottom">
+                                <label className="modal-dropdown-label">{t('transactions.typeLabel')}</label>
+                                <Dropdown 
+                                    dataArr={[
+                                        { id: 'expense', name: t('transactions.expense') },
+                                        { id: 'income', name: t('transactions.income') }
+                                    ]}
+                                    width="100%"
+                                    height="50px"
+                                    displayLabel={modalType === 'income' ? t('transactions.income') : t('transactions.expense')}
+                                    onSelect={(id) => { setModalType(id); setModalCategory(''); }} 
+                                    labelKey="name"
+                                />
+                            </div>
+
+                            <div className="transactions-form-group transactions-z-index-medium no-margin-bottom">
+                                <label className="modal-dropdown-label">{t('transactions.categoryLabel')}</label>
+                                <Dropdown 
+                                    dataArr={modalCategoryData}
+                                    width="100%"
+                                    height="50px"
+                                    displayLabel={modalCategoryData.find(c => c.id === modalCategory)?.name || t('transactions.selectCategory')}
+                                    onSelect={(id) => setModalCategory(id)}
+                                    labelKey="name"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="transactions-form-group">
+                            <div className="transactions-form-input">
+                                <input type="text" 
+                                        id="txTitle" 
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder=' ' />
+                                <label htmlFor="txTitle">{t('transactions.titleLabel')}</label>
+                            </div>
+                        </div>
+
+                        <div className="transactions-form-group">
+                            <div className="transactions-form-input">
+                                <input type="text" 
+                                        inputMode="decimal"
+                                        id="txAmount" 
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
+                                        placeholder=' ' />
+                                <label htmlFor="txAmount">{t('transactions.amountLabel')}</label>
+                            </div>
+                        </div>
+
+                        <div className="transactions-form-group">
+                            <div className="transactions-form-input label-always-floating">
+                                <input type="date" 
+                                        id="txDate" 
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                        placeholder=' ' />
+                                <label htmlFor="txDate">{t('transactions.dateLabel')}</label>
+                            </div>
+                        </div>
+
+                        <div className="transactions-form-group">
+                            <div className="transactions-form-input">
+                                <input type="text" 
+                                        id="txDesc" 
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        placeholder=' ' />
+                                <label htmlFor="txDesc">{t('transactions.descLabel')}</label>
+                            </div>
+                        </div>
+
+                        <div className="transactions-modal-actions">
+                            <button className="transactions-modal-btn" onClick={closeModal}>{t('budgets.modalNo')}</button>
+                            <button className="transactions-modal-btn primary" onClick={handleAddTransaction}>{t('budgets.saveBtn')}</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
