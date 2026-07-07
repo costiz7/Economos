@@ -24,7 +24,6 @@ function App() {
               <Route path="/statistics" element={ <StatisticsContent /> }/>
               <Route path="/savings" element={ <SavingsContent /> }/>
               <Route path="/budgets" element={ <BudgetsContent /> } />
-              <Route path="/myprofile" element=""/>
               <Route path="/settings" element={ <SettingsContent /> }/>
             </Route>
           </Route>

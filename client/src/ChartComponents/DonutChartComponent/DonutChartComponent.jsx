@@ -14,6 +14,7 @@ function DonutChartComponent({
     const { formatMoney } = useLanguage();
     const [focusedIndex, setFocusedIndex] = useState(null);
     const [isAnimated, setIsAnimated] = useState(false);
+    const { t } = useLanguage();
 
     useEffect(() => {
         if (!data || data.length === 0) {
@@ -27,7 +28,7 @@ function DonutChartComponent({
     }, [data]);
 
     if (!data || !Array.isArray(data) || data.length === 0) {
-        return <p>Nu există date.</p>;
+        return <p className='no-data'>{t('errors.NO_DATA')}</p>;
     }
 
     const colorArray = Array.isArray(colors) && colors.length > 0 ? colors : ["var(--black-color)"];

@@ -197,9 +197,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%; /* Schimbat din 100vw pentru a nu include scrollbar-ul OS-ului */
-    height: 100%; /* Schimbat din 100vh */
-    box-sizing: border-box; /* OBLIGATORIU: Previne lățirea din cauza padding-ului de mai jos */
+    width: 100%; 
+    height: 100%;
+    box-sizing: border-box;
     padding: 20px;
     display: flex;
     justify-content: center;
@@ -223,13 +223,12 @@
     padding: 30px;
     width: 100%;
     max-width: 500px;
-    max-height: 100%; /* Îi dă voie să crească DOAR până atinge padding-ul de protecție */
-    overflow-y: auto; /* Dacă e ecranul mic sau apar erori, dai scroll curat DOAR pe card */
+    max-height: 100%;
+    overflow-y: auto; 
     display: flex;
     flex-direction: column;
     align-items: center;
     animation: slideInUpModal 400ms ease-out forwards;
-    /* margin: auto; A FOST ȘTERS DEFINITIV! */
 }
 
 .transactions-modal-overlay.closing .transactions-modal-card {
@@ -252,10 +251,6 @@
     text-align: center;
     margin-bottom: 15px;
 }
-
-/* =========================================================
-   RÂNDUL PENTRU DROPDOWN-URI (FLEXBOX) ȘI ETICHETE MODAL
-========================================================= */
 
 .transactions-dropdowns-row {
     display: flex;
@@ -283,7 +278,6 @@
     text-align: left;
 }
 
-/* Structura Input-urilor cu Label Flotant */
 .transactions-form-group {
     width: 100%;
     margin-bottom: 15px;
@@ -341,7 +335,6 @@
     letter-spacing: 1px;
 }
 
-/* Pentru input-ul de Date, ținem label-ul mereu sus */
 .transactions-form-input.label-always-floating > label {
     top: 0px;
     font-size: 0.9rem;
@@ -349,7 +342,6 @@
     letter-spacing: 1px;
 }
 
-/* Butoane Acțiune Modal */
 .transactions-modal-actions {
     display: flex;
     flex-direction: column;
@@ -383,7 +375,6 @@
     filter: brightness(0.7);
 }
 
-/* Clase pentru înlocuirea stilurilor inline */
 .transactions-z-index-high {
     z-index: 13;
 }
@@ -395,10 +386,6 @@
 .no-margin-bottom {
     margin-bottom: 0 !important;
 }
-
-/* =========================================================
-   ANIMAȚII ȘI MEDIA QUERIES
-========================================================= */
 
 @keyframes fadeInModalOverlay {
     from { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }

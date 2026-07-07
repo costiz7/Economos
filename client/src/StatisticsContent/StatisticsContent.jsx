@@ -392,7 +392,7 @@ function StatisticsContent() {
                             return <Transaction key={tx.id} transaction={formattedTx} user={user} />;
                         })
                     ) : (
-                        <p className="no-statistics-message">{t('statistics.noData') || 'No transactions found.'}</p>
+                        <p className="no-data">{t('errors.NO_DATA')}</p>
                     )}
                 </div>
             </div>

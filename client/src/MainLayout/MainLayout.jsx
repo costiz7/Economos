@@ -109,9 +109,6 @@ function MainLayout() {
                     {<Link to="/budgets" onClick={toggleSidebar}>
                         <BudgetsIcon className="sidebar-icons" style={{ color: "var(--dark-green-color)" }}/>{t('layout.menuBudgets')}
                     </Link>}
-                    {<Link to="/myprofile" onClick={toggleSidebar}>
-                        <ProfileIcon className="sidebar-icons" style={{ color: "var(--purple-color)" }}/>{t('layout.menuProfile')}
-                    </Link>}
                     {<Link to="/settings" onClick={toggleSidebar}>
                         <SettingsIcon className="sidebar-icons" style={{ color: "var(--black-color)" }}/>{t('layout.menuSettings')}
                     </Link>}

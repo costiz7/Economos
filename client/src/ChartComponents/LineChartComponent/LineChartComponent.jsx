@@ -16,6 +16,7 @@ function LineChartComponent({
     const { formatMoney } = useLanguage();
     const [hoveredPoint, setHoveredPoint] = useState(null);
     const [isAnimated, setIsAnimated] = useState(false);
+    const { t } = useLanguage();
     
     // Generate a unique ID for this instance to prevent SVG gradient conflicts 
     // when rendering multiple charts on the same page.
@@ -43,7 +44,7 @@ function LineChartComponent({
 
     // 2. Guard clause: Line charts need at least 2 points to draw a path
     if (!data || !Array.isArray(data) || data.length < 2) {
-        return <p>Not enough data for a chart.</p>;
+        return <p className='no-data'>{t('errors.NO_DATA')}</p>;
     }
 
     // 3. SVG Internal Coordinates

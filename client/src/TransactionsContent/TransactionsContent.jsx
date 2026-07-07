@@ -9,7 +9,6 @@ function TransactionsContent() {
     const { t } = useLanguage();
     const { setIsLoading } = useLoading();
 
-    // Stocarea datelor globale
     const [user, setUser] = useState(() => {
         const storedUser = localStorage.getItem("user");
         return storedUser ? JSON.parse(storedUser) : null;
@@ -18,7 +17,6 @@ function TransactionsContent() {
     const [transactions, setTransactions] = useState([]);
     const [categories, setCategories] = useState([]);
     
-    // Paginare și Filtrare
     const [pagination, setPagination] = useState({
         totalItems: 0, totalPages: 1, currentPage: 1, itemsPerPage: 20
     });
@@ -31,14 +29,10 @@ function TransactionsContent() {
         categoryId: '', type: '', month: '', year: ''
     });
 
-    // ==========================================
-    // STĂRI PENTRU MODALUL DE ADĂUGARE MANUALĂ
-    // ==========================================
     const [activeModal, setActiveModal] = useState(null); 
     const [isClosing, setIsClosing] = useState(false);
     const [modalError, setModalError] = useState("");
 
-    // Câmpurile formularului
     const [modalType, setModalType] = useState("expense");
     const [modalCategory, setModalCategory] = useState("");
     const [title, setTitle] = useState("");
@@ -128,9 +122,6 @@ function TransactionsContent() {
         });
     };
 
-    // ==========================================
-    // LOGICA PENTRU MODAL ȘI TRANZACȚIE MANUALĂ
-    // ==========================================
     const openModal = () => {
         setIsClosing(false);
         setModalError("");
@@ -195,9 +186,6 @@ function TransactionsContent() {
         }
     };
 
-    // ==========================================
-    // DATE PENTRU DROPDOWN-URI
-    // ==========================================
     const typeData = [
         { id: '', name: t('transactions.all') },
         { id: 'income', name: t('transactions.income') },

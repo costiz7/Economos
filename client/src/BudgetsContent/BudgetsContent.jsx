@@ -147,7 +147,6 @@ function BudgetsContent() {
                 setBudgets(budgets.filter(b => b.budgetId !== selectedBudget.budgetId));
                 closeModal();
             } else {
-                // Handle delete errors gracefully too
                 const data = await response.json();
                 if (data.errorCode) {
                     setModalError(t(`budgets.error_${data.errorCode}`));

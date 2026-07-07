@@ -189,7 +189,7 @@ function DashboardContent() {
                                 <Transaction key={transaction.id} transaction={transaction} user={user}/>
                             )) 
                             : 
-                            <p>Nu exista date.</p>
+                            <p className='no-data'>{t('errors.NO_DATA')}</p>
                         }
                     </div>
                     

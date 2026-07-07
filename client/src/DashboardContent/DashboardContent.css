@@ -69,9 +69,6 @@
     flex-direction: column;
 }
 
-/* ==========================================================
-   STILURI NOI PENTRU BALANȚA DISPONIBILĂ (STANDALONE)
-   ========================================================== */
 
 .dashboard-balance-content.standalone {
     display: flex;
@@ -79,11 +76,10 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    flex: 1; /* Ocupă tot spațiul vertical rămas în card */
+    flex: 1;
     padding: 10px;
 }
 
-/* Dimensiune mărită (2.2rem) pentru a deveni punctul central al cardului */
 .dashboard-balance-amount {
     font-size: 2.2rem;
     font-weight: 900;
@@ -96,6 +92,18 @@
     width: 95%;
     display: inline-block;
     transition: color 0.2s ease-in-out;
+}
+
+.no-data {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    margin-top: 20px;
+    color: var(--red-color);
 }
 
 @media (max-width: 500px) {

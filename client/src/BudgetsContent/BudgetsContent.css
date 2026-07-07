@@ -46,7 +46,6 @@
     width: 100%;
 }
 
-/* Modal Layout styles via Flexbox exclusively */
 .budget-page-modal-overlay {
     position: fixed;
     top: 0;
@@ -100,7 +99,6 @@
     text-align: center;
 }
 
-/* Form groups structure and specific z-indexes */
 .budget-page-form-group {
     position: relative;
     width: 100%;
@@ -114,7 +112,6 @@
     z-index: 11;
 }
 
-/* Inputs with Floating Labels styling */
 .budget-page-form-input {
     position: relative;
     width: 100%;
@@ -156,7 +153,6 @@
     color: var(--black-color);
 }
 
-/* Transformed inline styles for the delete confirmation description */
 .budget-page-delete-text {
     color: var(--black-color);
     text-align: center;
@@ -166,7 +162,6 @@
     line-height: 1.5;
 }
 
-/* Modal actions row via Flexbox only */
 .budget-page-modal-actions {
     display: flex;
     justify-content: center;
@@ -176,7 +171,6 @@
     margin-top: 15px;
 }
 
-/* Stable and precise fixed width for buttons to avoid 100% object stretch */
 .budget-page-modal-btn {
     width: 140px;
     padding: 12px 0px;
